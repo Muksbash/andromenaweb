@@ -8,7 +8,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:auto;}
-body{background:#000;overflow-x:hidden;font-family:'Space Grotesk',sans-serif;color:#fff;cursor:none;}
+body{background:#000;overflow-x:hidden;overflow-y:scroll;font-family:'Space Grotesk',sans-serif;color:#fff;cursor:none;}
 
 /* CURSOR */
 #cur{position:fixed;width:4px;height:4px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
@@ -18,7 +18,7 @@ body{background:#000;overflow-x:hidden;font-family:'Space Grotesk',sans-serif;co
 #c{position:fixed;inset:0;z-index:0;}
 
 /* SCROLL DRIVER */
-#driver{height:1600vh;position:relative;z-index:1;pointer-events:none;}
+#driver{height:1600vh;position:relative;z-index:1;}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 56px;pointer-events:all;transition:all .4s;}
