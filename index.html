@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andromena Intelligence</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#000;overflow-x:hidden;font-family:'Space Grotesk',sans-serif;color:#fff;}
+canvas#galaxy{position:fixed;inset:0;z-index:0;}
+#scroll-container{position:relative;z-index:1;height:1200vh;pointer-events:none;}
+#ui{position:fixed;inset:0;z-index:20;pointer-events:none;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 56px;pointer-events:all;}
+.logo{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:8px;}
+.logo-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.5);animation:pip 3s ease-in-out infinite;}
+@keyframes pip{0%,100%{opacity:.5;}50%{opacity:.1;}}
+.nav-cta{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#000;background:rgba(255,255,255,.9);padding:9px 20px;text-decoration:none;pointer-events:all;}
+.panel{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;pointer-events:none;opacity:0;transition:opacity 1s ease;}
+.panel.visible{opacity:1;}
+#panel-hero{align-items:flex-start;padding:0 56px;}
+.hero-badge{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.hero-badge::before{content:'//';color:rgba(255,255,255,.15);}
+.hero-h1{font-size:clamp(44px,6vw,84px);font-weight:700;line-height:.9;letter-spacing:-.03em;color:#fff;margin-bottom:24px;}
+.hero-h1 em{font-style:normal;color:rgba(255,255,255,.3);font-weight:300;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.5);line-height:1.8;max-width:420px;margin-bottom:36px;}
+.hero-btns{display:flex;align-items:center;gap:20px;pointer-events:all;}
+.btn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#000;background:rgba(255,255,255,.9);padding:12px 28px;text-decoration:none;}
+.btn-g{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);text-decoration:none;display:flex;align-items:center;gap:7px;}
+.btn-g::after{content:'→';}
+.feat-panel{align-items:flex-start;padding:0 56px;}
+.fp-inner{max-width:500px;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);padding:40px;border:1px solid rgba(255,255,255,.08);border-top:1px solid rgba(255,255,255,.2);}
+.feat-num{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:14px;}
+.feat-h{font-size:clamp(28px,4vw,54px);font-weight:700;line-height:.93;letter-spacing:-.025em;color:#fff;margin-bottom:16px;}
+.feat-p{font-size:13px;color:rgba(255,255,255,.55);line-height:1.82;margin-bottom:22px;}
+.feat-tags{display:flex;flex-wrap:wrap;gap:7px;}
+.feat-tag{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.15);padding:5px 10px;}
+#panel-cta{align-items:center;text-align:center;}
+.scroll-hint{position:fixed;bottom:48px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;transition:opacity .6s;}
+.scroll-hint.gone{opacity:0;}
+.sh-line{width:1px;height:38px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.25));}
+.sh-txt{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.22);}
+#globe-state{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.25);display:flex;align-items:center;gap:7px;pointer-events:none;}
+.gs-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);animation:pip 2s ease-in-out infinite;}
+#progress{position:fixed;right:28px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.pdot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .4s;}
+.pdot.active{background:rgba(255,255,255,.75);transform:scale(1.5);}
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+  #panel-hero,.feat-panel{padding:0 20px;}
+  .fp-inner{padding:24px;}
+  .feat-h{font-size:clamp(24px,7vw,38px);}
+}
+</style>
+</head>
+<body>
+<canvas id="galaxy"></canvas>
+<div id="scroll-container"></div>
+<div id="ui">
+  <nav>
+    <div class="logo"><div class="logo-dot"></div>ANDROMENA</div>
+    <a href="#" class="nav-cta">Request Access</a>
+  </nav>
+
+  <div class="panel" id="panel-hero">
+    <div class="hero-badge">GCC Competitive Intelligence</div>
+    <h1 class="hero-h1">Everything<br>Your Competitors<br>Do. <em>Known.</em></h1>
+    <p class="hero-sub">A continuous intelligence system for GCC retail brands. Every signal, every market, without pause.</p>
+    <div class="hero-btns"><a href="#" class="btn">Request Access</a><a href="#" class="btn-g">Explore platform</a></div>
+  </div>
+
+  <div class="panel feat-panel" id="panel-1"><div class="fp-inner">
+    <div class="feat-num">01 — Pricing Intelligence</div>
+    <h2 class="feat-h">The market moves.<br>You move first.</h2>
+    <p class="feat-p">Your competitors' entire pricing landscape — every product, every shift — surfaced the moment it changes. Not reported. Known.</p>
+    <div class="feat-tags"><span class="feat-tag">Live pricing</span><span class="feat-tag">Discount detection</span><span class="feat-tag">All GCC markets</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-2"><div class="fp-inner">
+    <div class="feat-num">02 — Ad Surveillance</div>
+    <h2 class="feat-h">Their strategy.<br>Visible to you.</h2>
+    <p class="feat-p">Every campaign across Meta and Google — creative, copy, targeting, duration. When they surge. When they go quiet.</p>
+    <div class="feat-tags"><span class="feat-tag">Meta & Google</span><span class="feat-tag">Creative capture</span><span class="feat-tag">Campaign timing</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-3"><div class="fp-inner">
+    <div class="feat-num">03 — Social Pulse</div>
+    <h2 class="feat-h">Who speaks for them.<br>And what they say.</h2>
+    <p class="feat-p">Every creator aligned with your competitors — reach, geography, paid or organic — before it reaches your audience.</p>
+    <div class="feat-tags"><span class="feat-tag">Instagram & TikTok</span><span class="feat-tag">Creator mapping</span><span class="feat-tag">Paid detection</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-4"><div class="fp-inner">
+    <div class="feat-num">04 — Sentiment Analysis</div>
+    <h2 class="feat-h">What the market<br>actually thinks of them.</h2>
+    <p class="feat-p">Customer feedback scored across every platform. Their weaknesses become your clearest opportunities.</p>
+    <div class="feat-tags"><span class="feat-tag">App stores</span><span class="feat-tag">Sentiment scoring</span><span class="feat-tag">Arabic & English</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-5"><div class="fp-inner">
+    <div class="feat-num">05 — PR & News</div>
+    <h2 class="feat-h">Every story.<br>The moment it breaks.</h2>
+    <p class="feat-p">Across GCC media — English and Arabic — every competitor mention surfaces immediately.</p>
+    <div class="feat-tags"><span class="feat-tag">GCC media</span><span class="feat-tag">Arabic & English</span><span class="feat-tag">Real-time</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-6"><div class="fp-inner">
+    <div class="feat-num">06 — Search & Trends</div>
+    <h2 class="feat-h">Where attention<br>is moving.</h2>
+    <p class="feat-p">Search interest across six GCC markets tells you where consumers are going before they arrive.</p>
+    <div class="feat-tags"><span class="feat-tag">6 GCC markets</span><span class="feat-tag">Share of search</span><span class="feat-tag">Spike alerts</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-7"><div class="fp-inner">
+    <div class="feat-num">07 — Hiring Intelligence</div>
+    <h2 class="feat-h">Their next move<br>is already written.</h2>
+    <p class="feat-p">What a company hires tells you what it's building — months before any announcement.</p>
+    <div class="feat-tags"><span class="feat-tag">Role tracking</span><span class="feat-tag">Strategic intent</span><span class="feat-tag">All platforms</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-8"><div class="fp-inner">
+    <div class="feat-num">08 — Web Intelligence</div>
+    <h2 class="feat-h">Nothing on their<br>digital presence escapes.</h2>
+    <p class="feat-p">Every change to every page — classified, scored, explained. None of it missed.</p>
+    <div class="feat-tags"><span class="feat-tag">Change detection</span><span class="feat-tag">Visual diff</span><span class="feat-tag">Severity scoring</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-9"><div class="fp-inner">
+    <div class="feat-num">09 — AI Analyst</div>
+    <h2 class="feat-h">The intelligence,<br>already interpreted.</h2>
+    <p class="feat-p">Every morning, a precise briefing. Every question, an instant answer. Arabic or English.</p>
+    <div class="feat-tags"><span class="feat-tag">Daily brief</span><span class="feat-tag">Live AI chat</span><span class="feat-tag">Real data</span></div>
+  </div></div>
+
+  <div class="panel feat-panel" id="panel-10"><div class="fp-inner">
+    <div class="feat-num">10 — Activity Overview</div>
+    <h2 class="feat-h">Everything that matters.<br>One place.</h2>
+    <p class="feat-p">All intelligence unified. Ranked by priority. Your team knows what moved, what it means, what to do.</p>
+    <div class="feat-tags"><span class="feat-tag">Real-time feed</span><span class="feat-tag">All signals</span><span class="feat-tag">WhatsApp alerts</span></div>
+  </div></div>
+
+  <div class="panel" id="panel-cta" style="align-items:center;text-align:center;">
+    <div class="fp-inner" style="max-width:520px;margin:0 auto;">
+      <div class="feat-num" style="justify-content:center;display:flex;">// end of the journey</div>
+      <h2 class="feat-h" style="font-size:clamp(36px,6vw,72px);">See what<br>they're doing.</h2>
+      <p class="feat-p">Configure Andromena around one competitor. See exactly what the system sees.</p>
+      <a href="#" class="btn" style="pointer-events:all;display:inline-block;margin-top:8px;">Request Access</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint" id="scroll-hint">
+    <div class="sh-line"></div><span class="sh-txt">Scroll to explore</span>
+  </div>
+
+  <div id="globe-state"><div class="gs-dot"></div><span id="gs-txt">Entering the galaxy</span></div>
+
+  <div id="progress">
+    <div class="pdot active" id="pd-0"></div>
+    <div class="pdot" id="pd-1"></div>
+    <div class="pdot" id="pd-2"></div>
+    <div class="pdot" id="pd-3"></div>
+    <div class="pdot" id="pd-4"></div>
+    <div class="pdot" id="pd-5"></div>
+    <div class="pdot" id="pd-6"></div>
+    <div class="pdot" id="pd-7"></div>
+    <div class="pdot" id="pd-8"></div>
+    <div class="pdot" id="pd-9"></div>
+    <div class="pdot" id="pd-10"></div>
+    <div class="pdot" id="pd-11"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 10000);
+var renderer = new THREE.WebGLRenderer({canvas: document.getElementById('galaxy'), antialias: true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000008);
+
+window.addEventListener('resize', function(){
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// STARS — 3 layers for parallax depth
+function makeStars(count, spread, size, color) {
+  var geo = new THREE.BufferGeometry();
+  var pos = new Float32Array(count * 3);
+  for (var i = 0; i < count; i++) {
+    pos[i*3]   = (Math.random()-.5)*spread;
+    pos[i*3+1] = (Math.random()-.5)*spread*.5;
+    pos[i*3+2] = (Math.random()-.5)*spread*2 - 500;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  var mat = new THREE.PointsMaterial({size:size, color:new THREE.Color(color), transparent:true, opacity:.8, sizeAttenuation:true});
+  return new THREE.Points(geo, mat);
+}
+var s1 = makeStars(4000, 1200, 0.35, 0x9ab0ff);
+var s2 = makeStars(2000, 800,  0.6,  0xffffff);
+var s3 = makeStars(600,  400,  1.1,  0xffeedd);
+scene.add(s1, s2, s3);
+
+// DATA STREAMS — glowing lines rushing toward you
+var streamGroup = new THREE.Group();
+scene.add(streamGroup);
+var streamCols = [0x3377ff, 0x33ffaa, 0xffffff, 0x7799ff, 0x33bbff];
+for (var si = 0; si < 16; si++) {
+  var pts = [];
+  var sx = (Math.random()-.5)*120;
+  var sy = (Math.random()-.5)*40;
+  for (var pi = 0; pi <= 100; pi++) {
+    var t = pi/100;
+    var wv = Math.sin(t*Math.PI*4+si)*3;
+    pts.push(new THREE.Vector3(sx+wv, sy+wv*.5, -t*3200));
+  }
+  var lg = new THREE.BufferGeometry().setFromPoints(pts);
+  var lm = new THREE.LineBasicMaterial({
+    color: new THREE.Color(streamCols[si%streamCols.length]),
+    transparent: true,
+    opacity: 0.05 + Math.random()*.3
+  });
+  streamGroup.add(new THREE.Line(lg, lm));
+}
+
+// GLOW TEXTURE
+function makeGlow(hexColor) {
+  var cv = document.createElement('canvas');
+  cv.width = cv.height = 128;
+  var cx = cv.getContext('2d');
+  var c = new THREE.Color(hexColor);
+  var r=Math.round(c.r*255), g=Math.round(c.g*255), b=Math.round(c.b*255);
+  var grd = cx.createRadialGradient(64,64,0,64,64,64);
+  grd.addColorStop(0,'rgba('+r+','+g+','+b+',1)');
+  grd.addColorStop(.35,'rgba('+r+','+g+','+b+',.5)');
+  grd.addColorStop(1,'rgba('+r+','+g+','+b+',0)');
+  cx.fillStyle=grd; cx.fillRect(0,0,128,128);
+  return new THREE.CanvasTexture(cv);
+}
+
+// INTELLIGENCE GLOBES — 12 particle spheres along Z path
+var GCFG = [
+  {z:0,    r:0xffffff, label:'Entering the galaxy',        rad:25},
+  {z:-350, r:0x88ccff, label:'Extracting price signals',   rad:20},
+  {z:-600, r:0x4488ff, label:'Scanning ad networks',       rad:20},
+  {z:-850, r:0xffddaa, label:'Mapping social networks',    rad:22},
+  {z:-1100,r:0xffcc44, label:'Analyzing sentiment',        rad:20},
+  {z:-1350,r:0x44ffaa, label:'Broadcasting signals',       rad:21},
+  {z:-1600,r:0x44ccff, label:'Reading search patterns',    rad:20},
+  {z:-1850,r:0xaaaaff, label:'Decoding hiring signals',    rad:21},
+  {z:-2100,r:0x9966ff, label:'Scanning digital surfaces',  rad:20},
+  {z:-2350,r:0xffdd66, label:'Neural synthesis active',    rad:22},
+  {z:-2600,r:0xffffff, label:'All signals converging',     rad:26},
+  {z:-2900,r:0x66ffcc, label:'Journey complete',           rad:30},
+];
+
+var globes = [];
+GCFG.forEach(function(cfg) {
+  var group = new THREE.Group();
+  group.position.z = cfg.z;
+
+  // Offset globes slightly left/right for variety
+  group.position.x = (Math.random()-.5)*30;
+  group.position.y = (Math.random()-.5)*15;
+
+  var n = 3500;
+  var pos = new Float32Array(n*3);
+  var cols = new Float32Array(n*3);
+  var col = new THREE.Color(cfg.r);
+  for (var i=0; i<n; i++) {
+    var u=Math.random(), v=Math.random();
+    var th=2*Math.PI*u, ph=Math.acos(2*v-1);
+    var rad = cfg.rad*(0.97+Math.random()*.06);
+    pos[i*3]   = rad*Math.sin(ph)*Math.cos(th);
+    pos[i*3+1] = rad*Math.sin(ph)*Math.sin(th);
+    pos[i*3+2] = rad*Math.cos(ph);
+    var br = .4+Math.random()*.6;
+    cols[i*3]=col.r*br; cols[i*3+1]=col.g*br; cols[i*3+2]=col.b*br;
+  }
+  var geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color', new THREE.BufferAttribute(cols,3));
+  var mat = new THREE.PointsMaterial({size:.7, vertexColors:true, transparent:true, opacity:.4, sizeAttenuation:true});
+  var pts = new THREE.Points(geo, mat);
+  group.add(pts);
+
+  // Glow sprite
+  var sm = new THREE.SpriteMaterial({map:makeGlow(cfg.r), transparent:true, opacity:.08, blending:THREE.AdditiveBlending});
+  var sp = new THREE.Sprite(sm);
+  sp.scale.set(cfg.rad*6, cfg.rad*6, 1);
+  group.add(sp);
+
+  scene.add(group);
+  globes.push({group:group, pts:pts, glow:sp, cfg:cfg});
+});
+
+// NEBULA CLOUDS between destinations
+var nebCols = [0x001133, 0x003322, 0x110033, 0x332200];
+for (var ni=0; ni<25; ni++) {
+  var nm = new THREE.SpriteMaterial({
+    map: makeGlow(nebCols[ni%nebCols.length]),
+    transparent:true, opacity:.03,
+    blending:THREE.AdditiveBlending
+  });
+  var ns = new THREE.Sprite(nm);
+  ns.position.set((Math.random()-.5)*300, (Math.random()-.5)*120, -Math.random()*3000);
+  ns.scale.set(200+Math.random()*300, 120+Math.random()*180, 1);
+  scene.add(ns);
+}
+
+// CAMERA + SCROLL
+camera.position.set(0, 0, 80);
+var TOTAL_DEPTH = 3100;
+var PANELS = ['panel-hero','panel-1','panel-2','panel-3','panel-4','panel-5','panel-6','panel-7','panel-8','panel-9','panel-10','panel-cta'];
+var LABELS = GCFG.map(function(g){return g.label;});
+
+var scrollProg = 0, targetZ = 80, currentZ = 80;
+var mxT=0, myT=0, mx=0, my=0;
+var frame=0;
+
+document.addEventListener('mousemove', function(e){
+  mxT = (e.clientX/window.innerWidth-.5)*25;
+  myT = (e.clientY/window.innerHeight-.5)*-12;
+});
+
+window.addEventListener('scroll', function(){
+  var maxS = document.body.scrollHeight - window.innerHeight;
+  scrollProg = window.scrollY / maxS;
+  targetZ = 80 - scrollProg * TOTAL_DEPTH;
+  if(window.scrollY>60) document.getElementById('scroll-hint').classList.add('gone');
+},{passive:true});
+
+function updateUI(camZ) {
+  var n = PANELS.length;
+  var secD = TOTAL_DEPTH / n;
+  var dist = 80 - camZ;
+  var sec = Math.round(dist / secD);
+  sec = Math.max(0, Math.min(n-1, sec));
+
+  PANELS.forEach(function(id,i){
+    var el = document.getElementById(id);
+    if(!el) return;
+    if(i===sec) el.classList.add('visible');
+    else el.classList.remove('visible');
+  });
+
+  for(var i=0;i<12;i++){
+    var d=document.getElementById('pd-'+i);
+    if(d) d.classList.toggle('active', i===sec);
+  }
+  var lbl=document.getElementById('gs-txt');
+  if(lbl && LABELS[sec]) lbl.textContent=LABELS[sec];
+}
+
+// Show hero on load
+setTimeout(function(){
+  var h=document.getElementById('panel-hero');
+  if(h) h.classList.add('visible');
+},400);
+
+function animate(){
+  frame++;
+  requestAnimationFrame(animate);
+
+  // Smooth camera
+  currentZ += (targetZ - currentZ) * 0.055;
+  mx += (mxT - mx) * 0.04;
+  my += (myT - my) * 0.04;
+
+  camera.position.z = currentZ;
+  camera.position.x += (mx*.08 - camera.position.x) * .06;
+  camera.position.y += (my*.08 - camera.position.y) * .06;
+  camera.lookAt(camera.position.x*.3, camera.position.y*.3, currentZ - 150);
+
+  // Globe proximity brightness
+  globes.forEach(function(g,i){
+    g.group.rotation.y += .002 + i*.0001;
+    g.group.rotation.x += .0008;
+    var d = Math.abs(currentZ - g.cfg.z);
+    var prox = Math.max(0, 1 - d/250);
+    g.pts.material.opacity = .15 + prox*.85;
+    g.pts.material.size = .5 + prox*1.5;
+    g.glow.material.opacity = .04 + prox*.4;
+    // Scale glow as you approach
+    var sc = g.cfg.rad*(4 + prox*4);
+    g.glow.scale.set(sc, sc, 1);
+  });
+
+  // Star parallax
+  s1.position.x = mx*.015; s1.position.y = my*.015;
+  s2.position.x = mx*.03;  s2.position.y = my*.03;
+  s3.position.x = mx*.06;  s3.position.y = my*.06;
+
+  // Stream warp effect — brighter when moving fast
+  var speed = Math.abs(targetZ - currentZ);
+  streamGroup.children.forEach(function(line, i){
+    line.material.opacity = .04 + Math.sin(frame*.015+i)*.02 + speed*.003;
+  });
+
+  updateUI(currentZ);
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
