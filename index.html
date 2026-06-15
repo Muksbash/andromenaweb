@@ -3,1332 +3,414 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASTER — Intelligent Infrastructure</title>
+<title>Andromena Intelligence</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap');
-
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --black: #0a0a0a;
-    --near-black: #111111;
-    --grey-dark: #1a1a1a;
-    --grey-mid: #2e2e2e;
-    --grey-border: #222222;
-    --grey-text: #888888;
-    --grey-light: #cccccc;
-    --white: #f5f5f5;
-    --accent: #E8F285;
-    --accent-dim: rgba(232, 242, 133, 0.08);
-    --accent-glow: rgba(232, 242, 133, 0.15);
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Inter', sans-serif;
-    font-weight: 300;
-    line-height: 1.6;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* Custom cursor */
-  .cursor {
-    position: fixed;
-    top: 0; left: 0;
-    width: 10px; height: 10px;
-    background: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
-    mix-blend-mode: difference;
-  }
-
-  .cursor-ring {
-    position: fixed;
-    top: 0; left: 0;
-    width: 36px; height: 36px;
-    border: 1px solid rgba(232,242,133,0.4);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
-  }
-
-  body:hover .cursor { opacity: 1; }
-
-  /* Noise overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.35;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 28px 48px;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.4s, background 0.4s, padding 0.4s;
-  }
-
-  nav.scrolled {
-    background: rgba(10,10,10,0.92);
-    backdrop-filter: blur(20px);
-    border-color: var(--grey-border);
-    padding: 18px 48px;
-  }
-
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 20px;
-    letter-spacing: 0.08em;
-    color: var(--white);
-    text-transform: uppercase;
-  }
-
-  .nav-logo span { color: var(--accent); }
-
-  .nav-links {
-    display: flex;
-    gap: 40px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    color: var(--grey-text);
-    text-decoration: none;
-    font-size: 13px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: color 0.3s;
-  }
-
-  .nav-links a:hover { color: var(--white); }
-
-  .nav-cta {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid rgba(232,242,133,0.3);
-    padding: 10px 22px;
-    text-decoration: none;
-    transition: background 0.3s, border-color 0.3s;
-  }
-
-  .nav-cta:hover {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-  }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 48px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(232,242,133,0.04) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 80% 20%, rgba(232,242,133,0.06) 0%, transparent 60%);
-  }
-
-  /* Grid lines */
-  .hero-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size: 80px 80px;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
-  }
-
-  /* Animated orb */
-  .orb {
-    position: absolute;
-    top: 15%;
-    right: 10%;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(232,242,133,0.07) 0%, transparent 70%);
-    animation: orbPulse 8s ease-in-out infinite;
-    filter: blur(40px);
-  }
-
-  .orb2 {
-    position: absolute;
-    top: 50%;
-    right: 25%;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(232,242,133,0.1) 0%, transparent 70%);
-    animation: orbPulse 5s ease-in-out infinite reverse;
-    filter: blur(20px);
-  }
-
-  @keyframes orbPulse {
-    0%, 100% { transform: scale(1) translateY(0); opacity: 0.6; }
-    50% { transform: scale(1.15) translateY(-20px); opacity: 1; }
-  }
-
-  /* Floating ring */
-  .ring {
-    position: absolute;
-    top: 12%;
-    right: 8%;
-    width: 520px;
-    height: 520px;
-    border: 1px solid rgba(232,242,133,0.08);
-    border-radius: 50%;
-    animation: ringRotate 30s linear infinite;
-  }
-
-  .ring::after {
-    content: '';
-    position: absolute;
-    top: 20px; left: 20px; right: 20px; bottom: 20px;
-    border: 1px solid rgba(232,242,133,0.04);
-    border-radius: 50%;
-  }
-
-  .ring-dot {
-    position: absolute;
-    width: 6px; height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    top: -3px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 0 0 12px var(--accent);
-  }
-
-  @keyframes ringRotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .hero-eyebrow {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 24px;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.8s ease 0.3s forwards;
-  }
-
-  .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(52px, 8vw, 110px);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
-    color: var(--white);
-    max-width: 900px;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 1s ease 0.5s forwards;
-  }
-
-  .hero-title .dim { color: var(--grey-text); font-weight: 400; }
-
-  .hero-bottom {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-top: 60px;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.8s ease 0.9s forwards;
-  }
-
-  .hero-desc {
-    max-width: 320px;
-    font-size: 15px;
-    color: var(--grey-text);
-    line-height: 1.7;
-  }
-
-  .hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: var(--black);
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 16px 36px;
-    border: none;
-    text-decoration: none;
-    transition: opacity 0.3s, transform 0.3s;
-    display: inline-block;
-  }
-
-  .btn-primary:hover { opacity: 0.85; transform: translateY(-2px); }
-
-  .btn-ghost {
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--grey-light);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: color 0.3s;
-  }
-
-  .btn-ghost::after {
-    content: '→';
-    transition: transform 0.3s;
-  }
-
-  .btn-ghost:hover { color: var(--white); }
-  .btn-ghost:hover::after { transform: translateX(5px); }
-
-  /* Scroll indicator */
-  .scroll-hint {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    animation: fadeUp 0.8s ease 1.2s both;
-  }
-
-  .scroll-line {
-    width: 1px;
-    height: 50px;
-    background: linear-gradient(to bottom, transparent, var(--grey-text));
-    animation: scrollDrop 2s ease-in-out infinite;
-  }
-
-  @keyframes scrollDrop {
-    0% { transform: scaleY(0); transform-origin: top; }
-    50% { transform: scaleY(1); transform-origin: top; }
-    51% { transform: scaleY(1); transform-origin: bottom; }
-    100% { transform: scaleY(0); transform-origin: bottom; }
-  }
-
-  /* MARQUEE */
-  .marquee-section {
-    border-top: 1px solid var(--grey-border);
-    border-bottom: 1px solid var(--grey-border);
-    padding: 18px 0;
-    overflow: hidden;
-    background: var(--near-black);
-  }
-
-  .marquee-track {
-    display: flex;
-    gap: 60px;
-    white-space: nowrap;
-    animation: marquee 30s linear infinite;
-  }
-
-  .marquee-item {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--grey-text);
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-shrink: 0;
-  }
-
-  .marquee-item::before {
-    content: '◆';
-    font-size: 6px;
-    color: var(--accent);
-  }
-
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  /* STATS BAND */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    border-bottom: 1px solid var(--grey-border);
-  }
-
-  .stat-item {
-    padding: 60px 48px;
-    border-right: 1px solid var(--grey-border);
-    position: relative;
-    overflow: hidden;
-    transition: background 0.4s;
-  }
-
-  .stat-item:last-child { border-right: none; }
-
-  .stat-item::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-
-  .stat-item:hover::after { transform: scaleX(1); }
-  .stat-item:hover { background: var(--accent-dim); }
-
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 52px;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--white);
-    margin-bottom: 8px;
-  }
-
-  .stat-num span { color: var(--accent); font-size: 32px; }
-
-  .stat-label {
-    font-size: 12px;
-    color: var(--grey-text);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* SECTION LAYOUT */
-  section { position: relative; }
-
-  .section-label {
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
-
-  /* ABOUT / MANIFESTO */
-  .manifesto {
-    padding: 140px 48px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-    border-bottom: 1px solid var(--grey-border);
-  }
-
-  .manifesto-left .big-text {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(32px, 4vw, 52px);
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--white);
-  }
-
-  .manifesto-left .big-text em {
-    font-style: normal;
-    color: var(--grey-text);
-    font-weight: 400;
-  }
-
-  .manifesto-right p {
-    font-size: 16px;
-    color: var(--grey-text);
-    line-height: 1.8;
-    margin-bottom: 24px;
-  }
-
-  .manifesto-right p strong { color: var(--white); font-weight: 500; }
-
-  .underline-link {
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--white);
-    text-decoration: none;
-    border-bottom: 1px solid var(--grey-mid);
-    padding-bottom: 4px;
-    transition: border-color 0.3s, color 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .underline-link:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* SERVICES */
-  .services {
-    padding: 140px 48px;
-    border-bottom: 1px solid var(--grey-border);
-  }
-
-  .services-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 80px;
-  }
-
-  .services-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(36px, 4vw, 56px);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-  }
-
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--grey-border);
-  }
-
-  .service-card {
-    background: var(--black);
-    padding: 48px 40px;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.4s;
-    cursor: none;
-  }
-
-  .service-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.5s ease;
-  }
-
-  .service-card:hover { background: var(--grey-dark); }
-  .service-card:hover::before { transform: scaleX(1); }
-
-  .service-num {
-    font-size: 11px;
-    color: var(--grey-text);
-    letter-spacing: 0.1em;
-    margin-bottom: 40px;
-  }
-
-  .service-icon {
-    width: 44px;
-    height: 44px;
-    margin-bottom: 28px;
-    opacity: 0.7;
-    transition: opacity 0.3s;
-  }
-
-  .service-card:hover .service-icon { opacity: 1; }
-
-  .service-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    color: var(--white);
-  }
-
-  .service-desc {
-    font-size: 14px;
-    color: var(--grey-text);
-    line-height: 1.7;
-  }
-
-  /* FEATURE / VISUAL BLOCK */
-  .feature-block {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 600px;
-    border-bottom: 1px solid var(--grey-border);
-  }
-
-  .feature-visual {
-    background: var(--near-black);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .feature-visual-inner {
-    position: relative;
-    width: 280px;
-    height: 280px;
-  }
-
-  /* Animated rings */
-  .f-ring {
-    position: absolute;
-    inset: 0;
-    border: 1px solid rgba(232,242,133,0.12);
-    border-radius: 50%;
-    animation: fRingPulse 4s ease-in-out infinite;
-  }
-
-  .f-ring:nth-child(2) {
-    inset: 30px;
-    animation-delay: 0.5s;
-    border-color: rgba(232,242,133,0.08);
-  }
-
-  .f-ring:nth-child(3) {
-    inset: 60px;
-    animation-delay: 1s;
-    border-color: rgba(232,242,133,0.15);
-  }
-
-  .f-ring:nth-child(4) {
-    inset: 90px;
-    animation-delay: 1.5s;
-  }
-
-  @keyframes fRingPulse {
-    0%, 100% { transform: scale(1); opacity: 0.6; }
-    50% { transform: scale(1.04); opacity: 1; }
-  }
-
-  .f-core {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px; height: 60px;
-    background: var(--accent-dim);
-    border: 1px solid var(--accent);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .f-core::after {
-    content: '';
-    width: 18px; height: 18px;
-    background: var(--accent);
-    border-radius: 50%;
-    box-shadow: 0 0 20px var(--accent);
-    animation: corePulse 2s ease-in-out infinite;
-  }
-
-  @keyframes corePulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(0.8); }
-  }
-
-  /* Data lines */
-  .data-lines {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-  }
-
-  .data-line {
-    position: absolute;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(232,242,133,0.3), transparent);
-    animation: dataFlow 3s ease-in-out infinite;
-    opacity: 0;
-  }
-
-  @keyframes dataFlow {
-    0% { opacity: 0; transform: translateX(-100%); }
-    20% { opacity: 1; }
-    80% { opacity: 1; }
-    100% { opacity: 0; transform: translateX(100%); }
-  }
-
-  .feature-content {
-    padding: 80px 60px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .feature-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(28px, 3vw, 42px);
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 24px;
-  }
-
-  .feature-text {
-    font-size: 15px;
-    color: var(--grey-text);
-    line-height: 1.8;
-    margin-bottom: 40px;
-  }
-
-  .feature-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 48px;
-  }
-
-  .tag {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--grey-text);
-    border: 1px solid var(--grey-border);
-    padding: 6px 14px;
-    transition: border-color 0.3s, color 0.3s;
-  }
-
-  .tag:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* TESTIMONIAL */
-  .testimonial-section {
-    padding: 140px 48px;
-    border-bottom: 1px solid var(--grey-border);
-    text-align: center;
-    background: var(--near-black);
-  }
-
-  .testimonial-quote {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(22px, 3vw, 36px);
-    font-weight: 500;
-    line-height: 1.3;
-    max-width: 800px;
-    margin: 0 auto 48px;
-    color: var(--white);
-  }
-
-  .testimonial-quote .accent-word { color: var(--accent); }
-
-  .testimonial-author {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-  }
-
-  .author-avatar {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: var(--grey-mid);
-    border: 1px solid var(--grey-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: var(--grey-text);
-    font-weight: 500;
-  }
-
-  .author-info { text-align: left; }
-  .author-name { font-size: 14px; font-weight: 500; color: var(--white); }
-  .author-role { font-size: 12px; color: var(--grey-text); }
-
-  /* PROCESS */
-  .process {
-    padding: 140px 48px;
-    border-bottom: 1px solid var(--grey-border);
-  }
-
-  .process-header {
-    max-width: 500px;
-    margin-bottom: 80px;
-  }
-
-  .process-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 40px;
-    position: relative;
-  }
-
-  .process-grid::before {
-    content: '';
-    position: absolute;
-    top: 22px;
-    left: 10%;
-    right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--grey-border), var(--grey-border), transparent);
-  }
-
-  .process-step { position: relative; }
-
-  .step-marker {
-    width: 44px; height: 44px;
-    border: 1px solid var(--grey-border);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: var(--grey-text);
-    margin-bottom: 28px;
-    background: var(--black);
-    position: relative;
-    z-index: 1;
-    transition: border-color 0.3s, color 0.3s;
-  }
-
-  .process-step:hover .step-marker {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .step-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: var(--white);
-  }
-
-  .step-desc {
-    font-size: 14px;
-    color: var(--grey-text);
-    line-height: 1.7;
-  }
-
-  /* CTA */
-  .cta-section {
-    padding: 160px 48px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cta-bg {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(232,242,133,0.04) 0%, transparent 70%);
-  }
-
-  .cta-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(42px, 7vw, 90px);
-    font-weight: 700;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: 40px;
-    position: relative;
-  }
-
-  .cta-title .outline-text {
-    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
-    color: transparent;
-  }
-
-  .cta-sub {
-    font-size: 16px;
-    color: var(--grey-text);
-    margin-bottom: 56px;
-    position: relative;
-  }
-
-  .cta-actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    position: relative;
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--grey-border);
-    padding: 60px 48px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 40px;
-    background: var(--near-black);
-  }
-
-  .footer-brand .nav-logo { margin-bottom: 16px; display: block; }
-
-  .footer-tagline {
-    font-size: 13px;
-    color: var(--grey-text);
-    max-width: 200px;
-    line-height: 1.6;
-  }
-
-  .footer-col h4 {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--grey-text);
-    margin-bottom: 20px;
-  }
-
-  .footer-col ul { list-style: none; }
-  .footer-col ul li { margin-bottom: 12px; }
-
-  .footer-col ul a {
-    font-size: 14px;
-    color: var(--grey-text);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-
-  .footer-col ul a:hover { color: var(--white); }
-
-  .footer-bottom {
-    border-top: 1px solid var(--grey-border);
-    padding: 24px 48px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--near-black);
-  }
-
-  .footer-bottom p {
-    font-size: 12px;
-    color: var(--grey-text);
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-  .reveal-delay-4 { transition-delay: 0.4s; }
-
-  @media (max-width: 900px) {
-    nav { padding: 20px 24px; }
-    .nav-links { display: none; }
-    .hero { padding: 0 24px 60px; }
-    .hero-bottom { flex-direction: column; align-items: flex-start; gap: 32px; }
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    .manifesto, .feature-block { grid-template-columns: 1fr; }
-    .services-grid { grid-template-columns: 1fr; }
-    .process-grid { grid-template-columns: 1fr 1fr; }
-    footer { grid-template-columns: 1fr 1fr; }
-    section, .manifesto, .services, .process, .testimonial-section, .cta-section { padding: 80px 24px; }
-  }
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:auto;}
+body{background:#000;overflow-x:hidden;overflow-y:scroll;font-family:'Space Grotesk',sans-serif;color:#fff;cursor:none;}
+
+/* CURSOR */
+#cur{position:fixed;width:4px;height:4px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cur-ring{position:fixed;width:20px;height:20px;border:1px solid rgba(255,255,255,.2);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .08s,top .08s;}
+
+/* VIDEO BG */
+#bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;}
+
+/* OVERLAYS */
+#vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,.55) 100%);}
+#zone-atm{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 2s ease;}
+#speed-canvas{position:fixed;inset:0;z-index:3;pointer-events:none;}
+
+/* SCROLL DRIVER */
+#driver{height:1500vh;position:relative;z-index:5;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 56px;pointer-events:all;transition:all .4s;}
+nav.solid{background:rgba(0,0,0,.45);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,.04);padding:16px 56px;}
+.logo{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:9px;}
+.ld{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.4);animation:pulse 3s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:.1;}}
+.ncta{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#000;background:rgba(255,255,255,.9);padding:8px 20px;text-decoration:none;transition:opacity .3s;}
+.ncta:hover{opacity:.7;}
+
+/* PANELS */
+.panel{position:fixed;inset:0;z-index:20;display:flex;align-items:center;pointer-events:none;opacity:0;transition:opacity 1.4s ease;}
+.panel.on{opacity:1;}
+#p0{justify-content:center;flex-direction:column;text-align:center;padding:0 20px;}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:28px;}
+.hero-h{font-size:clamp(34px,5.2vw,74px);font-weight:700;line-height:.92;letter-spacing:-.035em;color:#fff;margin-bottom:26px;max-width:800px;}
+.hero-h em{font-style:normal;color:rgba(255,255,255,.28);font-weight:300;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.42);line-height:1.85;max-width:440px;margin:0 auto 44px;}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:22px;pointer-events:all;}
+.btn{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#000;background:rgba(255,255,255,.9);padding:12px 28px;text-decoration:none;transition:opacity .3s;}
+.btn:hover{opacity:.75;}
+.btn-ghost{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.35);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .3s;}
+.btn-ghost::after{content:'→';}
+.btn-ghost:hover{color:rgba(255,255,255,.65);}
+
+/* FEATURE PANELS */
+.feat{padding:0 60px;align-items:center;}
+.feat-inner{max-width:520px;background:rgba(0,0,0,.25);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.06);padding:44px 48px;}
+.feat-label{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.feat-label::before{content:'//';color:rgba(255,255,255,.1);}
+.feat-q{font-size:clamp(20px,2.6vw,36px);font-weight:700;line-height:1.1;letter-spacing:-.02em;color:#fff;margin-bottom:20px;font-style:italic;}
+.feat-body{font-size:14px;color:rgba(255,255,255,.48);line-height:1.88;margin-bottom:28px;}
+.feat-detail{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.07em;color:rgba(255,255,255,.2);line-height:2;border-left:1px solid rgba(255,255,255,.1);padding-left:16px;}
+
+/* CTA PANEL */
+#p11{justify-content:center;flex-direction:column;text-align:center;padding:0 20px;}
+.cta-pre{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:24px;}
+.cta-h{font-size:clamp(36px,6vw,88px);font-weight:700;line-height:.9;letter-spacing:-.04em;color:#fff;margin-bottom:18px;}
+.cta-h .dim{-webkit-text-stroke:1px rgba(255,255,255,.2);color:transparent;}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.38);max-width:440px;margin:0 auto 40px;line-height:1.82;}
+.cta-note{display:block;font-family:'JetBrains Mono',monospace;font-size:7px;color:rgba(255,255,255,.12);letter-spacing:.1em;text-transform:uppercase;margin-top:14px;}
+
+/* SCROLL HINT */
+#shi{position:fixed;bottom:48px;left:50%;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;align-items:center;gap:7px;pointer-events:none;transition:opacity .6s;}
+#shi.gone{opacity:0;}
+.shl{width:1px;height:36px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.2));}
+.sht{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.15);}
+
+/* ZONE LABEL */
+#glbl{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:30;font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.18);display:flex;align-items:center;gap:7px;pointer-events:none;}
+.gd{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.2);animation:pulse 2s ease-in-out infinite;}
+
+/* PROGRESS DOTS */
+#prog{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.pd{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.12);transition:all .4s;}
+.pd.on{background:rgba(255,255,255,.75);transform:scale(1.6);}
+
+@media(max-width:768px){
+  nav{padding:14px 20px;}nav.solid{padding:12px 20px;}
+  .feat{padding:0 16px;}.feat-inner{padding:28px 24px;}
+  body{cursor:auto;}#cur,#cur-ring{display:none;}
+  #prog{display:none;}
+}
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- VIDEO BACKGROUND -->
+<video id="bg-video" muted playsinline preload="auto">
+  <source src="assets/video-web.mp4" type="video/mp4">
+</video>
+
+<!-- OVERLAYS -->
+<div id="vignette"></div>
+<div id="zone-atm"></div>
+<canvas id="speed-canvas"></canvas>
+
+<!-- SCROLL DRIVER -->
+<div id="driver"></div>
 
 <!-- NAV -->
 <nav id="nav">
-  <div class="nav-logo">ASTER<span>.</span></div>
-  <ul class="nav-links">
-    <li><a href="#">Platform</a></li>
-    <li><a href="#">Solutions</a></li>
-    <li><a href="#">Research</a></li>
-    <li><a href="#">Company</a></li>
-  </ul>
-  <a href="#" class="nav-cta">Request Access</a>
+  <div class="logo"><div class="ld"></div>ANDROMENA</div>
+  <a href="#" class="ncta">Request Access</a>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="orb"></div>
-  <div class="orb2"></div>
-  <div class="ring"><div class="ring-dot"></div></div>
-
-  <div class="hero-eyebrow">Next-gen infrastructure · Est. 2021</div>
-  <h1 class="hero-title">
-    Build systems<br>
-    <span class="dim">that think</span><br>
-    ahead.
-  </h1>
-  <div class="hero-bottom">
-    <p class="hero-desc">
-      Aster gives engineering teams the infrastructure layer to deploy, monitor, and scale intelligent systems — without the overhead.
-    </p>
-    <div class="hero-actions">
-      <a href="#" class="btn-primary">Start Building</a>
-      <a href="#" class="btn-ghost">See the platform</a>
-    </div>
-  </div>
-
-  <div class="scroll-hint">
-    <div class="scroll-line"></div>
-  </div>
-</section>
-
-<!-- MARQUEE -->
-<div class="marquee-section">
-  <div class="marquee-track">
-    <span class="marquee-item">Zero-latency inference</span>
-    <span class="marquee-item">Edge deployment</span>
-    <span class="marquee-item">Adaptive pipelines</span>
-    <span class="marquee-item">Real-time monitoring</span>
-    <span class="marquee-item">Enterprise-grade security</span>
-    <span class="marquee-item">99.99% uptime SLA</span>
-    <span class="marquee-item">Auto-scaling</span>
-    <span class="marquee-item">Model-agnostic</span>
-    <span class="marquee-item">Zero-latency inference</span>
-    <span class="marquee-item">Edge deployment</span>
-    <span class="marquee-item">Adaptive pipelines</span>
-    <span class="marquee-item">Real-time monitoring</span>
-    <span class="marquee-item">Enterprise-grade security</span>
-    <span class="marquee-item">99.99% uptime SLA</span>
-    <span class="marquee-item">Auto-scaling</span>
-    <span class="marquee-item">Model-agnostic</span>
+<!-- P0: HERO -->
+<div class="panel" id="p0">
+  <div class="hero-eyebrow">Andromena Intelligence · GCC</div>
+  <h1 class="hero-h">"The brands that win tomorrow<br>already know what's happening <em>today."</em></h1>
+  <p class="hero-sub">Continuous competitive intelligence for the GCC's most ambitious retail brands. Every signal. Every market. Without pause.</p>
+  <div class="hero-btns">
+    <a href="#" class="btn">Request Access</a>
+    <a href="#" class="btn-ghost">Explore the platform</a>
   </div>
 </div>
 
-<!-- STATS -->
-<div class="stats">
-  <div class="stat-item reveal">
-    <div class="stat-num">4.2<span>B</span></div>
-    <div class="stat-label">Requests Processed</div>
-  </div>
-  <div class="stat-item reveal reveal-delay-1">
-    <div class="stat-num">0.8<span>ms</span></div>
-    <div class="stat-label">Median Latency</div>
-  </div>
-  <div class="stat-item reveal reveal-delay-2">
-    <div class="stat-num">340<span>+</span></div>
-    <div class="stat-label">Enterprise Clients</div>
-  </div>
-  <div class="stat-item reveal reveal-delay-3">
-    <div class="stat-num">99.9<span>%</span></div>
-    <div class="stat-label">Uptime Guaranteed</div>
+<!-- FEATURE PANELS -->
+<div class="panel feat" id="p1"><div class="feat-inner">
+  <div class="feat-label">01 · Pricing Intelligence</div>
+  <p class="feat-q">"Price is the most visible decision a competitor makes. We make sure you see it first."</p>
+  <p class="feat-body">Every shift. Every market. Every promotion — surfaced the moment it happens. Not reported the next day. Known the moment it changes.</p>
+  <div class="feat-detail">Live pricing · Discount detection<br>Category analysis · All 6 GCC markets<br>Arabic + English · Instant alerts</div>
+</div></div>
+
+<div class="panel feat" id="p2"><div class="feat-inner">
+  <div class="feat-label">02 · Ad Surveillance</div>
+  <p class="feat-q">"A campaign tells you everything about where a brand is going. Read theirs before they launch."</p>
+  <p class="feat-body">Every creative. Every market they target. Every message they test. When they surge spend and when they go quiet — all visible, always.</p>
+  <div class="feat-detail">Meta & Google · Creative capture<br>Regional targeting · Campaign timing<br>Spend signals · Dark post detection</div>
+</div></div>
+
+<div class="panel feat" id="p3"><div class="feat-inner">
+  <div class="feat-label">03 · Social Pulse</div>
+  <p class="feat-q">"Influence doesn't happen in boardrooms. It happens in comment sections. We track every voice they've enlisted."</p>
+  <p class="feat-body">Every creator aligned with your competitors — reach, engagement, geography. Paid or organic. Before it reaches your audience.</p>
+  <div class="feat-detail">Instagram & TikTok · Creator mapping<br>Paid vs organic detection · Reach metrics<br>GCC geography · Arabic & English</div>
+</div></div>
+
+<div class="panel feat" id="p4"><div class="feat-inner">
+  <div class="feat-label">04 · Sentiment Analysis</div>
+  <p class="feat-q">"Your competitors' customers are telling you exactly where to win. You just need to listen."</p>
+  <p class="feat-body">Every review. Every rating. Every complaint they haven't fixed. Scored, tracked, and surfaced — their weaknesses become your clearest opportunities.</p>
+  <div class="feat-detail">App stores · Review platforms<br>Sentiment scoring · Topic clustering<br>Trend over time · Arabic & English</div>
+</div></div>
+
+<div class="panel feat" id="p5"><div class="feat-inner">
+  <div class="feat-label">05 · PR & News</div>
+  <p class="feat-q">"The story breaks before the strategy does. Be reading when it happens."</p>
+  <p class="feat-body">Every mention. Every outlet. Arabic and English. Across all six GCC markets — the moment it publishes, you have it.</p>
+  <div class="feat-detail">GCC media · Arabic & English<br>Real-time capture · Priority scoring<br>Sentiment by story · Source tracking</div>
+</div></div>
+
+<div class="panel feat" id="p6"><div class="feat-inner">
+  <div class="feat-label">06 · Search & Trends</div>
+  <p class="feat-q">"Demand doesn't appear suddenly. It builds quietly, then surges. We show you the build."</p>
+  <p class="feat-body">Search interest across six GCC markets tells you where consumers are going before they arrive. Spot the surge. Own the moment.</p>
+  <div class="feat-detail">6 GCC markets · Share of search<br>Spike detection · Trend direction<br>Arabic keywords · Category view</div>
+</div></div>
+
+<div class="panel feat" id="p7"><div class="feat-inner">
+  <div class="feat-label">07 · Hiring Intelligence</div>
+  <p class="feat-q">"A job posting is a confession. It tells you exactly what a competitor is building next."</p>
+  <p class="feat-body">Every role. Every department surge. Expansion, new products, campaign investment — all visible in their hiring activity, months before any announcement.</p>
+  <div class="feat-detail">Role tracking · Department signals<br>Strategic intent mapping · All platforms<br>GCC locations · Seniority levels</div>
+</div></div>
+
+<div class="panel feat" id="p8"><div class="feat-inner">
+  <div class="feat-label">08 · Web Intelligence</div>
+  <p class="feat-q">"A changed banner. A restructured page. Nothing on their digital surface goes unnoticed."</p>
+  <p class="feat-body">Every change to every page — classified, scored, explained. A new promotion quietly appearing. A navigation restructured overnight. None of it missed.</p>
+  <div class="feat-detail">Change detection · Visual diff<br>Severity scoring · Page classification<br>Continuous monitoring · Full history</div>
+</div></div>
+
+<div class="panel feat" id="p9"><div class="feat-inner">
+  <div class="feat-label">09 · AI Analyst</div>
+  <p class="feat-q">"Intelligence is only useful when it's already been understood. Yours arrives interpreted."</p>
+  <p class="feat-body">Every morning, a precise briefing built on real data from your platform. Ask anything. Get an answer instantly. In Arabic or English.</p>
+  <div class="feat-detail">Daily intelligence brief · Live AI chat<br>Built on your real data · Arabic & English<br>WhatsApp delivery · 07:00 GST</div>
+</div></div>
+
+<div class="panel feat" id="p10"><div class="feat-inner">
+  <div class="feat-label">10 · Activity Overview</div>
+  <p class="feat-q">"Everything that moved. Everything that matters. One place. Every morning."</p>
+  <p class="feat-body">All intelligence unified. Ranked by priority. Filtered to what's relevant. Your team walks in knowing exactly what happened, what it means, and what to do.</p>
+  <div class="feat-detail">Real-time unified feed · Priority ranking<br>All 10 dimensions · WhatsApp alerts<br>Team access · Daily digest</div>
+</div></div>
+
+<!-- P11: CTA -->
+<div class="panel" id="p11">
+  <div class="cta-pre">// this is what your competitors don't want you to have</div>
+  <h2 class="cta-h">See what they're<br><span class="dim">doing.</span></h2>
+  <p class="cta-sub">We'll configure Andromena around one of your competitors and show you exactly what the system sees. No commitment. Just clarity.</p>
+  <div style="pointer-events:all;">
+    <a href="#" class="btn">Request Access</a>
+    <span class="cta-note">// available for gcc retail brands · response within 24 hours</span>
   </div>
 </div>
 
-<!-- MANIFESTO -->
-<section class="manifesto">
-  <div class="manifesto-left reveal">
-    <p class="section-label">Our philosophy</p>
-    <p class="big-text">
-      Complexity belongs<br>
-      <em>in the engine,</em><br>
-      not on your team.
-    </p>
-  </div>
-  <div class="manifesto-right reveal reveal-delay-2">
-    <p>The best infrastructure is <strong>invisible.</strong> It handles the hard parts — distributed coordination, fault tolerance, intelligent routing — so your engineers can focus on what actually matters: the product.</p>
-    <p>We built Aster after spending years inside the systems we were frustrated by. Every feature exists because we needed it ourselves.</p>
-    <a href="#" class="underline-link">Read our story →</a>
-  </div>
-</section>
-
-<!-- SERVICES -->
-<section class="services">
-  <div class="services-header reveal">
-    <div>
-      <p class="section-label">What we offer</p>
-      <h2 class="services-title">The full stack<br>of modern infra.</h2>
-    </div>
-    <a href="#" class="underline-link">All capabilities →</a>
-  </div>
-  <div class="services-grid">
-    <div class="service-card reveal">
-      <div class="service-num">01</div>
-      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
-        <circle cx="22" cy="22" r="20" stroke="#E8F285" stroke-width="0.8"/>
-        <path d="M14 22h16M22 14v16" stroke="#E8F285" stroke-width="0.8"/>
-        <circle cx="22" cy="22" r="4" stroke="#E8F285" stroke-width="0.8"/>
-      </svg>
-      <div class="service-name">Neural Routing</div>
-      <div class="service-desc">Dynamically route inference requests to the optimal compute node based on load, model size, and latency requirements.</div>
-    </div>
-    <div class="service-card reveal reveal-delay-1">
-      <div class="service-num">02</div>
-      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
-        <rect x="8" y="8" width="12" height="12" stroke="#E8F285" stroke-width="0.8"/>
-        <rect x="24" y="8" width="12" height="12" stroke="#E8F285" stroke-width="0.8"/>
-        <rect x="8" y="24" width="12" height="12" stroke="#E8F285" stroke-width="0.8"/>
-        <rect x="24" y="24" width="12" height="12" stroke="#E8F285" stroke-width="0.8"/>
-      </svg>
-      <div class="service-name">Adaptive Clusters</div>
-      <div class="service-desc">GPU clusters that scale up in seconds and scale down to zero when idle. No reserved capacity, no waste.</div>
-    </div>
-    <div class="service-card reveal reveal-delay-2">
-      <div class="service-num">03</div>
-      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
-        <path d="M8 36L20 18l8 10 6-8 6 16" stroke="#E8F285" stroke-width="0.8" stroke-linecap="round"/>
-        <circle cx="8" cy="36" r="2" fill="#E8F285"/>
-        <circle cx="36" cy="36" r="2" fill="#E8F285"/>
-      </svg>
-      <div class="service-name">Live Observability</div>
-      <div class="service-desc">Token-level tracing, cost attribution, and anomaly detection across every model call in real time.</div>
-    </div>
-    <div class="service-card reveal">
-      <div class="service-num">04</div>
-      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
-        <path d="M22 8v6M22 30v6M8 22h6M30 22h6" stroke="#E8F285" stroke-width="0.8" stroke-linecap="round"/>
-        <circle cx="22" cy="22" r="8" stroke="#E8F285" stroke-width="0.8"/>
-      </svg>
-      <div class="service-name">Pipeline Orchestration</div>
-      <div class="service-desc">Chain models, tools, and APIs into reliable workflows with automatic retry, versioning, and rollback.</div>
-    </div>
-    <div class="service-card reveal reveal-delay-1">
-      <div class="service-num">05</div>
-      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
-        <rect x="6" y="12" width="32" height="20" rx="2" stroke="#E8F285" stroke-width="0.8"/>
-        <path d="M14 22h6M24 22h6M14 17h4M26 27h4" stroke="#E8F285" stroke-width="0.8" stroke-linecap="round"/>
-      </svg>
-      <div class="service-name">Secure Enclaves</div>
-      <div class="service-desc">SOC2-compliant processing with confidential compute, data residency controls, and zero-retention inference.</div>
-    </div>
-    <div class="service-card reveal reveal-delay-2">
-      <div class="service-num">06</div>
-      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
-        <circle cx="22" cy="22" r="14" stroke="#E8F285" stroke-width="0.8"/>
-        <path d="M8 22h28M22 8c-4 4-6 9-6 14s2 10 6 14M22 8c4 4 6 9 6 14s-2 10-6 14" stroke="#E8F285" stroke-width="0.8"/>
-      </svg>
-      <div class="service-name">Global Edge Network</div>
-      <div class="service-desc">Deploy models to 38 edge locations. Serve your users from the closest compute node, anywhere on earth.</div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURE BLOCK -->
-<div class="feature-block">
-  <div class="feature-visual">
-    <div class="data-lines" id="dataLines"></div>
-    <div class="feature-visual-inner">
-      <div class="f-ring"></div>
-      <div class="f-ring"></div>
-      <div class="f-ring"></div>
-      <div class="f-ring"></div>
-      <div class="f-core"></div>
-    </div>
-  </div>
-  <div class="feature-content reveal">
-    <p class="section-label">Core technology</p>
-    <h2 class="feature-title">Inference that<br>never sleeps.</h2>
-    <p class="feature-text">Our sub-millisecond routing layer keeps every request on the fastest possible path. No cold starts, no queue spikes — just consistent, predictable performance at any scale.</p>
-    <div class="feature-tags">
-      <span class="tag">Auto-scaling</span>
-      <span class="tag">Multi-model</span>
-      <span class="tag">Streaming</span>
-      <span class="tag">Batching</span>
-      <span class="tag">Quantization</span>
-    </div>
-    <a href="#" class="underline-link">Explore the architecture →</a>
-  </div>
-</div>
-
-<!-- TESTIMONIAL -->
-<section class="testimonial-section">
-  <p class="section-label reveal" style="margin-bottom: 40px;">What teams say</p>
-  <blockquote class="testimonial-quote reveal">
-    "We cut inference costs by 60% in the first month. Aster's routing alone paid for itself — and we didn't change a <span class="accent-word">single line</span> of model code."
-  </blockquote>
-  <div class="testimonial-author reveal reveal-delay-1">
-    <div class="author-avatar">DK</div>
-    <div class="author-info">
-      <div class="author-name">Daniel Kim</div>
-      <div class="author-role">VP Engineering · Forma Labs</div>
-    </div>
-  </div>
-</section>
-
-<!-- PROCESS -->
-<section class="process">
-  <div class="process-header reveal">
-    <p class="section-label">How it works</p>
-    <h2 class="services-title">From zero to<br>production in hours.</h2>
-  </div>
-  <div class="process-grid">
-    <div class="process-step reveal">
-      <div class="step-marker">01</div>
-      <div class="step-title">Connect</div>
-      <div class="step-desc">Point your existing model endpoints at Aster. One line of config, no SDK required.</div>
-    </div>
-    <div class="process-step reveal reveal-delay-1">
-      <div class="step-marker">02</div>
-      <div class="step-title">Configure</div>
-      <div class="step-desc">Set your routing rules, latency budgets, and fallback behavior through the dashboard or API.</div>
-    </div>
-    <div class="process-step reveal reveal-delay-2">
-      <div class="step-marker">03</div>
-      <div class="step-title">Deploy</div>
-      <div class="step-desc">Push to edge nodes across your chosen regions. Traffic flows immediately, with live verification.</div>
-    </div>
-    <div class="process-step reveal reveal-delay-3">
-      <div class="step-marker">04</div>
-      <div class="step-title">Optimize</div>
-      <div class="step-desc">Aster learns from your traffic patterns and continuously adjusts routing to improve cost and speed.</div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <div class="cta-bg"></div>
-  <h2 class="cta-title reveal">
-    Ready to<br>
-    <span class="outline-text">move faster?</span>
-  </h2>
-  <p class="cta-sub reveal reveal-delay-1">Join 340+ engineering teams already on Aster.</p>
-  <div class="cta-actions reveal reveal-delay-2">
-    <a href="#" class="btn-primary">Request Early Access</a>
-    <a href="#" class="btn-ghost">Schedule a demo</a>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-brand">
-    <span class="nav-logo">ASTER<span style="color:var(--accent)">.</span></span>
-    <p class="footer-tagline">Intelligent infrastructure for the next generation of software.</p>
-  </div>
-  <div class="footer-col">
-    <h4>Platform</h4>
-    <ul>
-      <li><a href="#">Neural Routing</a></li>
-      <li><a href="#">Edge Network</a></li>
-      <li><a href="#">Observability</a></li>
-      <li><a href="#">Security</a></li>
-    </ul>
-  </div>
-  <div class="footer-col">
-    <h4>Company</h4>
-    <ul>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Blog</a></li>
-      <li><a href="#">Careers</a></li>
-      <li><a href="#">Press</a></li>
-    </ul>
-  </div>
-  <div class="footer-col">
-    <h4>Resources</h4>
-    <ul>
-      <li><a href="#">Documentation</a></li>
-      <li><a href="#">API Reference</a></li>
-      <li><a href="#">Status</a></li>
-      <li><a href="#">Changelog</a></li>
-    </ul>
-  </div>
-</footer>
-<div class="footer-bottom">
-  <p>© 2026 Aster Technologies, Inc.</p>
-  <p>Privacy · Terms · Security</p>
+<!-- UI CHROME -->
+<div id="glbl"><div class="gd"></div><span id="glblt">Begin your journey</span></div>
+<div id="shi"><div class="shl"></div><span class="sht">Scroll to travel</span></div>
+<div id="prog">
+  <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div><div class="pd" id="pd2"></div>
+  <div class="pd" id="pd3"></div><div class="pd" id="pd4"></div><div class="pd" id="pd5"></div>
+  <div class="pd" id="pd6"></div><div class="pd" id="pd7"></div><div class="pd" id="pd8"></div>
+  <div class="pd" id="pd9"></div><div class="pd" id="pd10"></div><div class="pd" id="pd11"></div>
 </div>
 
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
+// ═══════════════════════════════════════════════════════════════
+// ANDROMENA — Video Scrub Space Travel
+// ═══════════════════════════════════════════════════════════════
 
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-  });
+var video = document.getElementById('bg-video');
+var speedCanvas = document.getElementById('speed-canvas');
+var speedCtx = speedCanvas.getContext('2d');
+var W = window.innerWidth, H = window.innerHeight;
+speedCanvas.width = W; speedCanvas.height = H;
 
-  function animateRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    requestAnimationFrame(animateRing);
+window.addEventListener('resize', function(){
+  W = window.innerWidth; H = window.innerHeight;
+  speedCanvas.width = W; speedCanvas.height = H;
+});
+
+// ── ZONE CONFIGS ──────────────────────────────────────────────
+// Each zone maps to a scroll % range (0–1) and a screen-edge atmosphere color
+var ZONES = [
+  { pct: 0,      label: 'Begin your journey',   atm: null },
+  { pct: 0.09,   label: 'Pricing Intelligence',  atm: 'rgba(30,80,180,' },
+  { pct: 0.18,   label: 'Ad Surveillance',        atm: 'rgba(20,40,160,' },
+  { pct: 0.27,   label: 'Social Pulse',           atm: 'rgba(180,120,20,' },
+  { pct: 0.36,   label: 'Sentiment Analysis',     atm: 'rgba(200,100,10,' },
+  { pct: 0.45,   label: 'PR & News',              atm: 'rgba(20,160,80,'  },
+  { pct: 0.54,   label: 'Search & Trends',        atm: 'rgba(10,160,200,' },
+  { pct: 0.63,   label: 'Hiring Intelligence',    atm: 'rgba(100,60,220,' },
+  { pct: 0.72,   label: 'Web Intelligence',       atm: 'rgba(130,40,200,' },
+  { pct: 0.81,   label: 'AI Analyst',             atm: 'rgba(220,180,20,' },
+  { pct: 0.90,   label: 'Activity Overview',      atm: 'rgba(200,200,220,' },
+  { pct: 1.0,    label: 'Journey complete',        atm: 'rgba(60,220,160,' },
+];
+
+// ── PANEL & DOT ELEMENTS ──────────────────────────────────────
+var panels = [], dots = [];
+for (var i = 0; i < 12; i++) {
+  panels.push(document.getElementById('p' + i));
+  dots.push(document.getElementById('pd' + i));
+}
+
+// ── STATE ─────────────────────────────────────────────────────
+var scrollPct = 0, lastScrollPct = 0;
+var smoothPct = 0;
+var currentZone = 0;
+var speedOpacity = 0;
+var videoDuration = 0;
+var videoReady = false;
+var lastScrollY = 0, scrollVelocity = 0;
+var animFrame;
+
+// ── VIDEO SETUP ───────────────────────────────────────────────
+video.addEventListener('loadedmetadata', function() {
+  videoDuration = video.duration;
+  videoReady = true;
+  video.currentTime = 0;
+  video.pause();
+});
+// Fallback if already loaded
+if (video.readyState >= 1) {
+  videoDuration = video.duration;
+  videoReady = true;
+  video.pause();
+}
+
+// ── SCROLL ────────────────────────────────────────────────────
+window.addEventListener('scroll', function() {
+  var maxS = document.getElementById('driver').offsetHeight - H;
+  scrollPct = Math.min(1, Math.max(0, window.scrollY / maxS));
+  scrollVelocity = Math.abs(window.scrollY - lastScrollY);
+  lastScrollY = window.scrollY;
+
+  if (window.scrollY > 80) {
+    document.getElementById('shi').classList.add('gone');
+    document.getElementById('nav').classList.add('solid');
+  } else {
+    document.getElementById('nav').classList.remove('solid');
   }
-  animateRing();
+}, { passive: true });
 
-  document.querySelectorAll('a, button, .service-card, .stat-item').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.width = '16px';
-      cursor.style.height = '16px';
-      ring.style.width = '54px';
-      ring.style.height = '54px';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.width = '10px';
-      cursor.style.height = '10px';
-      ring.style.width = '36px';
-      ring.style.height = '36px';
-    });
+// ── CURSOR ────────────────────────────────────────────────────
+var cur = document.getElementById('cur');
+var curR = document.getElementById('cur-ring');
+var crx = W/2, cry = H/2, rcx = W/2, rcy = H/2;
+document.addEventListener('mousemove', function(e){ crx = e.clientX; cry = e.clientY; });
+(function trackCursor(){
+  rcx += (crx - rcx) * 0.1; rcy += (cry - rcy) * 0.1;
+  if(cur){ cur.style.left = crx+'px'; cur.style.top = cry+'px'; }
+  if(curR){ curR.style.left = rcx+'px'; curR.style.top = rcy+'px'; }
+  requestAnimationFrame(trackCursor);
+})();
+
+// ── SPEED LINES ───────────────────────────────────────────────
+var lines = [];
+for(var si = 0; si < 80; si++){
+  lines.push({
+    x: Math.random() * W, y: Math.random() * H,
+    len: 40 + Math.random() * 100,
+    alpha: 0.15 + Math.random() * 0.5
   });
+}
 
-  // Nav scroll
-  const nav = document.getElementById('nav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 60);
-  });
-
-  // Reveal on scroll
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.12 });
-
-  reveals.forEach(el => observer.observe(el));
-
-  // Data lines in feature visual
-  const dataLinesContainer = document.getElementById('dataLines');
-  for (let i = 0; i < 8; i++) {
-    const line = document.createElement('div');
-    line.className = 'data-line';
-    line.style.top = (15 + i * 10) + '%';
-    line.style.width = (40 + Math.random() * 40) + '%';
-    line.style.left = (Math.random() * 30) + '%';
-    line.style.animationDuration = (2 + Math.random() * 3) + 's';
-    line.style.animationDelay = (Math.random() * 4) + 's';
-    dataLinesContainer.appendChild(line);
+function drawSpeed(intensity){
+  speedCtx.clearRect(0, 0, W, H);
+  if(intensity < 0.02) return;
+  var cx = W/2, cy = H/2;
+  for(var i = 0; i < lines.length; i++){
+    var l = lines[i];
+    var dx = l.x - cx, dy = l.y - cy;
+    var dist = Math.sqrt(dx*dx + dy*dy) || 1;
+    var nx = dx/dist, ny = dy/dist;
+    var len = l.len * intensity;
+    speedCtx.beginPath();
+    speedCtx.moveTo(l.x, l.y);
+    speedCtx.lineTo(l.x + nx*len, l.y + ny*len);
+    speedCtx.strokeStyle = 'rgba(180,210,255,' + (l.alpha * intensity) + ')';
+    speedCtx.lineWidth = 0.6;
+    speedCtx.stroke();
+    l.x += nx * intensity * 5;
+    l.y += ny * intensity * 5;
+    if(l.x < 0 || l.x > W || l.y < 0 || l.y > H){
+      l.x = cx + (Math.random()-0.5)*60;
+      l.y = cy + (Math.random()-0.5)*60;
+    }
   }
+}
+
+// ── ZONE ATMOSPHERE ───────────────────────────────────────────
+var zoneAtm = document.getElementById('zone-atm');
+var lastZone = -1;
+function setAtmosphere(zoneIdx){
+  if(zoneIdx === lastZone) return;
+  lastZone = zoneIdx;
+  var z = ZONES[zoneIdx];
+  var lbl = document.getElementById('glblt');
+  if(lbl) lbl.textContent = z.label;
+  if(z.atm){
+    zoneAtm.style.background =
+      'radial-gradient(ellipse at center, transparent 25%, ' +
+      z.atm + '0.18) 65%, ' + z.atm + '0.45) 100%)';
+    zoneAtm.style.opacity = '1';
+  } else {
+    zoneAtm.style.opacity = '0';
+  }
+  // Update panels
+  panels.forEach(function(el, i){
+    if(!el) return;
+    el.classList.toggle('on', i === zoneIdx);
+  });
+  dots.forEach(function(el, i){
+    if(!el) return;
+    el.classList.toggle('on', i === zoneIdx);
+  });
+}
+
+// ── MAIN LOOP ─────────────────────────────────────────────────
+var prevPct = 0;
+function tick(){
+  requestAnimationFrame(tick);
+
+  // Smooth scroll pct
+  smoothPct += (scrollPct - smoothPct) * 0.06;
+
+  // Scrub video
+  if(videoReady && videoDuration > 0){
+    var targetTime = smoothPct * videoDuration;
+    // Only seek if diff is meaningful (avoids constant seeking on idle)
+    if(Math.abs(video.currentTime - targetTime) > 0.04){
+      video.currentTime = targetTime;
+    }
+  }
+
+  // Speed lines — based on how fast scroll is changing
+  var delta = Math.abs(smoothPct - prevPct);
+  prevPct = smoothPct;
+  var targetSpeedOp = Math.min(1, delta * 120);
+  speedOpacity += (targetSpeedOp - speedOpacity) * 0.15;
+  drawSpeed(speedOpacity);
+
+  // Zone detection
+  var zone = 0;
+  for(var i = ZONES.length - 1; i >= 0; i--){
+    if(smoothPct >= ZONES[i].pct - 0.03){
+      zone = i; break;
+    }
+  }
+  setAtmosphere(zone);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+setTimeout(function(){
+  panels[0] && panels[0].classList.add('on');
+  dots[0] && dots[0].classList.add('on');
+}, 400);
+
+tick();
 </script>
 </body>
 </html>
