@@ -7,400 +7,601 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#000;overflow-x:hidden;font-family:'Space Grotesk',sans-serif;color:#fff;}
-canvas#galaxy{position:fixed;inset:0;z-index:0;}
-#scroll-container{position:relative;z-index:1;height:1200vh;pointer-events:none;}
-#ui{position:fixed;inset:0;z-index:20;pointer-events:none;}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 56px;pointer-events:all;}
-.logo{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:8px;}
-.logo-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.5);animation:pip 3s ease-in-out infinite;}
-@keyframes pip{0%,100%{opacity:.5;}50%{opacity:.1;}}
-.nav-cta{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#000;background:rgba(255,255,255,.9);padding:9px 20px;text-decoration:none;pointer-events:all;}
-.panel{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;pointer-events:none;opacity:0;transition:opacity 1s ease;}
-.panel.visible{opacity:1;}
-#panel-hero{align-items:flex-start;padding:0 56px;}
-.hero-badge{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
-.hero-badge::before{content:'//';color:rgba(255,255,255,.15);}
-.hero-h1{font-size:clamp(44px,6vw,84px);font-weight:700;line-height:.9;letter-spacing:-.03em;color:#fff;margin-bottom:24px;}
-.hero-h1 em{font-style:normal;color:rgba(255,255,255,.3);font-weight:300;}
-.hero-sub{font-size:15px;color:rgba(255,255,255,.5);line-height:1.8;max-width:420px;margin-bottom:36px;}
-.hero-btns{display:flex;align-items:center;gap:20px;pointer-events:all;}
-.btn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#000;background:rgba(255,255,255,.9);padding:12px 28px;text-decoration:none;}
-.btn-g{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);text-decoration:none;display:flex;align-items:center;gap:7px;}
-.btn-g::after{content:'→';}
-.feat-panel{align-items:flex-start;padding:0 56px;}
-.fp-inner{max-width:500px;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);padding:40px;border:1px solid rgba(255,255,255,.08);border-top:1px solid rgba(255,255,255,.2);}
-.feat-num{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:14px;}
-.feat-h{font-size:clamp(28px,4vw,54px);font-weight:700;line-height:.93;letter-spacing:-.025em;color:#fff;margin-bottom:16px;}
-.feat-p{font-size:13px;color:rgba(255,255,255,.55);line-height:1.82;margin-bottom:22px;}
-.feat-tags{display:flex;flex-wrap:wrap;gap:7px;}
-.feat-tag{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.15);padding:5px 10px;}
-#panel-cta{align-items:center;text-align:center;}
-.scroll-hint{position:fixed;bottom:48px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;transition:opacity .6s;}
-.scroll-hint.gone{opacity:0;}
-.sh-line{width:1px;height:38px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.25));}
-.sh-txt{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.22);}
-#globe-state{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.25);display:flex;align-items:center;gap:7px;pointer-events:none;}
-.gs-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.3);animation:pip 2s ease-in-out infinite;}
-#progress{position:fixed;right:28px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;pointer-events:none;}
-.pdot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .4s;}
-.pdot.active{background:rgba(255,255,255,.75);transform:scale(1.5);}
+html{scroll-behavior:auto;}
+body{background:#000;overflow-x:hidden;font-family:'Space Grotesk',sans-serif;color:#fff;cursor:none;}
+
+/* CURSOR */
+#cur{position:fixed;width:4px;height:4px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
+#cur-ring{position:fixed;width:20px;height:20px;border:1px solid rgba(255,255,255,.2);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+
+/* CANVAS */
+#c{position:fixed;inset:0;z-index:0;}
+
+/* SCROLL DRIVER */
+#driver{height:1600vh;position:relative;z-index:1;pointer-events:none;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 56px;pointer-events:all;transition:all .4s;}
+nav.solid{background:rgba(0,0,0,.5);backdrop-filter:blur(20px);padding:16px 56px;}
+.logo{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:8px;}
+.ld{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.5);animation:ldp 3s ease-in-out infinite;}
+@keyframes ldp{0%,100%{opacity:.5;}50%{opacity:.1;}}
+.ncta{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#000;background:rgba(255,255,255,.88);padding:8px 18px;text-decoration:none;transition:opacity .3s;}
+.ncta:hover{opacity:.7;}
+
+/* PANELS — fixed overlay, fade in/out */
+.panel{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 1.2s ease;
+}
+.panel.on{opacity:1;}
+
+/* HERO PANEL */
+#p0{justify-content:center;flex-direction:column;text-align:center;padding:0 20px;}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:28px;}
+.hero-h{font-size:clamp(36px,5.5vw,78px);font-weight:700;line-height:.92;letter-spacing:-.035em;color:#fff;margin-bottom:28px;max-width:820px;}
+.hero-h em{font-style:normal;color:rgba(255,255,255,.32);font-weight:300;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.45);line-height:1.85;max-width:460px;margin:0 auto 44px;}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:22px;pointer-events:all;}
+.btn{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#000;background:rgba(255,255,255,.9);padding:12px 28px;text-decoration:none;transition:opacity .3s;}
+.btn:hover{opacity:.75;}
+.btn-ghost{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.38);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .3s;}
+.btn-ghost::after{content:'→';}
+.btn-ghost:hover{color:rgba(255,255,255,.7);}
+
+/* FEATURE PANELS */
+.feat{padding:0 56px;align-items:center;}
+.feat-inner{max-width:520px;}
+.feat-label{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.feat-label::before{content:'//';color:rgba(255,255,255,.1);}
+.feat-q{font-size:clamp(22px,3vw,40px);font-weight:700;line-height:1.08;letter-spacing:-.022em;color:#fff;margin-bottom:20px;font-style:italic;}
+.feat-body{font-size:14px;color:rgba(255,255,255,.5);line-height:1.88;margin-bottom:28px;}
+.feat-detail{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.08em;color:rgba(255,255,255,.22);line-height:1.9;border-left:1px solid rgba(255,255,255,.1);padding-left:16px;}
+
+/* CTA PANEL */
+#p11{justify-content:center;flex-direction:column;text-align:center;padding:0 20px;}
+.cta-pre{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:24px;}
+.cta-h{font-size:clamp(36px,6vw,88px);font-weight:700;line-height:.9;letter-spacing:-.04em;color:#fff;margin-bottom:18px;}
+.cta-h .dim{-webkit-text-stroke:1px rgba(255,255,255,.22);color:transparent;}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.4);max-width:440px;margin:0 auto 40px;line-height:1.82;}
+.cta-note{display:block;font-family:'JetBrains Mono',monospace;font-size:7px;color:rgba(255,255,255,.15);letter-spacing:.1em;text-transform:uppercase;margin-top:14px;}
+
+/* GALAXY LABEL — bottom center */
+#glbl{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:30;font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.2);display:flex;align-items:center;gap:7px;pointer-events:none;transition:opacity .4s;}
+.gd{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.25);animation:ldp 2s ease-in-out infinite;}
+
+/* SCROLL HINT */
+#shi{position:fixed;bottom:52px;left:50%;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;align-items:center;gap:7px;pointer-events:none;transition:opacity .6s;}
+#shi.gone{opacity:0;}
+.shl{width:1px;height:36px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.22));}
+.sht{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.18);}
+
+/* PROGRESS */
+#prog{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
+.pd{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .4s;}
+.pd.on{background:rgba(255,255,255,.7);transform:scale(1.6);}
+
+/* MOBILE */
 @media(max-width:768px){
   nav{padding:14px 20px;}
-  #panel-hero,.feat-panel{padding:0 20px;}
-  .fp-inner{padding:24px;}
-  .feat-h{font-size:clamp(24px,7vw,38px);}
+  nav.solid{padding:12px 20px;}
+  .feat{padding:0 20px;}
+  .hero-h{font-size:clamp(28px,8vw,44px);}
+  .feat-q{font-size:clamp(20px,5.5vw,30px);}
+  #prog{display:none;}
+  body{cursor:auto;}
+  #cur,#cur-ring{display:none;}
 }
 </style>
 </head>
 <body>
-<canvas id="galaxy"></canvas>
-<div id="scroll-container"></div>
-<div id="ui">
-  <nav>
-    <div class="logo"><div class="logo-dot"></div>ANDROMENA</div>
-    <a href="#" class="nav-cta">Request Access</a>
-  </nav>
 
-  <div class="panel" id="panel-hero">
-    <div class="hero-badge">GCC Competitive Intelligence</div>
-    <h1 class="hero-h1">Everything<br>Your Competitors<br>Do. <em>Known.</em></h1>
-    <p class="hero-sub">A continuous intelligence system for GCC retail brands. Every signal, every market, without pause.</p>
-    <div class="hero-btns"><a href="#" class="btn">Request Access</a><a href="#" class="btn-g">Explore platform</a></div>
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<canvas id="c"></canvas>
+<div id="driver"></div>
+
+<nav id="nav">
+  <div class="logo"><div class="ld"></div>ANDROMENA</div>
+  <a href="#" class="ncta">Request Access</a>
+</nav>
+
+<!-- P0: HERO -->
+<div class="panel" id="p0">
+  <div class="hero-eyebrow">Andromena Intelligence · GCC</div>
+  <h1 class="hero-h">"The brands that win tomorrow<br>already know what's happening <em>today."</em></h1>
+  <p class="hero-sub">Continuous competitive intelligence for the GCC's most ambitious retail brands. Every signal. Every market. Without pause.</p>
+  <div class="hero-btns">
+    <a href="#" class="btn">Request Access</a>
+    <a href="#" class="btn-ghost">Explore the platform</a>
   </div>
+</div>
 
-  <div class="panel feat-panel" id="panel-1"><div class="fp-inner">
-    <div class="feat-num">01 — Pricing Intelligence</div>
-    <h2 class="feat-h">The market moves.<br>You move first.</h2>
-    <p class="feat-p">Your competitors' entire pricing landscape — every product, every shift — surfaced the moment it changes. Not reported. Known.</p>
-    <div class="feat-tags"><span class="feat-tag">Live pricing</span><span class="feat-tag">Discount detection</span><span class="feat-tag">All GCC markets</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-2"><div class="fp-inner">
-    <div class="feat-num">02 — Ad Surveillance</div>
-    <h2 class="feat-h">Their strategy.<br>Visible to you.</h2>
-    <p class="feat-p">Every campaign across Meta and Google — creative, copy, targeting, duration. When they surge. When they go quiet.</p>
-    <div class="feat-tags"><span class="feat-tag">Meta & Google</span><span class="feat-tag">Creative capture</span><span class="feat-tag">Campaign timing</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-3"><div class="fp-inner">
-    <div class="feat-num">03 — Social Pulse</div>
-    <h2 class="feat-h">Who speaks for them.<br>And what they say.</h2>
-    <p class="feat-p">Every creator aligned with your competitors — reach, geography, paid or organic — before it reaches your audience.</p>
-    <div class="feat-tags"><span class="feat-tag">Instagram & TikTok</span><span class="feat-tag">Creator mapping</span><span class="feat-tag">Paid detection</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-4"><div class="fp-inner">
-    <div class="feat-num">04 — Sentiment Analysis</div>
-    <h2 class="feat-h">What the market<br>actually thinks of them.</h2>
-    <p class="feat-p">Customer feedback scored across every platform. Their weaknesses become your clearest opportunities.</p>
-    <div class="feat-tags"><span class="feat-tag">App stores</span><span class="feat-tag">Sentiment scoring</span><span class="feat-tag">Arabic & English</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-5"><div class="fp-inner">
-    <div class="feat-num">05 — PR & News</div>
-    <h2 class="feat-h">Every story.<br>The moment it breaks.</h2>
-    <p class="feat-p">Across GCC media — English and Arabic — every competitor mention surfaces immediately.</p>
-    <div class="feat-tags"><span class="feat-tag">GCC media</span><span class="feat-tag">Arabic & English</span><span class="feat-tag">Real-time</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-6"><div class="fp-inner">
-    <div class="feat-num">06 — Search & Trends</div>
-    <h2 class="feat-h">Where attention<br>is moving.</h2>
-    <p class="feat-p">Search interest across six GCC markets tells you where consumers are going before they arrive.</p>
-    <div class="feat-tags"><span class="feat-tag">6 GCC markets</span><span class="feat-tag">Share of search</span><span class="feat-tag">Spike alerts</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-7"><div class="fp-inner">
-    <div class="feat-num">07 — Hiring Intelligence</div>
-    <h2 class="feat-h">Their next move<br>is already written.</h2>
-    <p class="feat-p">What a company hires tells you what it's building — months before any announcement.</p>
-    <div class="feat-tags"><span class="feat-tag">Role tracking</span><span class="feat-tag">Strategic intent</span><span class="feat-tag">All platforms</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-8"><div class="fp-inner">
-    <div class="feat-num">08 — Web Intelligence</div>
-    <h2 class="feat-h">Nothing on their<br>digital presence escapes.</h2>
-    <p class="feat-p">Every change to every page — classified, scored, explained. None of it missed.</p>
-    <div class="feat-tags"><span class="feat-tag">Change detection</span><span class="feat-tag">Visual diff</span><span class="feat-tag">Severity scoring</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-9"><div class="fp-inner">
-    <div class="feat-num">09 — AI Analyst</div>
-    <h2 class="feat-h">The intelligence,<br>already interpreted.</h2>
-    <p class="feat-p">Every morning, a precise briefing. Every question, an instant answer. Arabic or English.</p>
-    <div class="feat-tags"><span class="feat-tag">Daily brief</span><span class="feat-tag">Live AI chat</span><span class="feat-tag">Real data</span></div>
-  </div></div>
-
-  <div class="panel feat-panel" id="panel-10"><div class="fp-inner">
-    <div class="feat-num">10 — Activity Overview</div>
-    <h2 class="feat-h">Everything that matters.<br>One place.</h2>
-    <p class="feat-p">All intelligence unified. Ranked by priority. Your team knows what moved, what it means, what to do.</p>
-    <div class="feat-tags"><span class="feat-tag">Real-time feed</span><span class="feat-tag">All signals</span><span class="feat-tag">WhatsApp alerts</span></div>
-  </div></div>
-
-  <div class="panel" id="panel-cta" style="align-items:center;text-align:center;">
-    <div class="fp-inner" style="max-width:520px;margin:0 auto;">
-      <div class="feat-num" style="justify-content:center;display:flex;">// end of the journey</div>
-      <h2 class="feat-h" style="font-size:clamp(36px,6vw,72px);">See what<br>they're doing.</h2>
-      <p class="feat-p">Configure Andromena around one competitor. See exactly what the system sees.</p>
-      <a href="#" class="btn" style="pointer-events:all;display:inline-block;margin-top:8px;">Request Access</a>
-    </div>
+<!-- P1: PRICING -->
+<div class="panel feat" id="p1">
+  <div class="feat-inner">
+    <div class="feat-label">01 · Pricing Intelligence</div>
+    <p class="feat-q">"Price is the most visible decision a competitor makes. We make sure you see it first."</p>
+    <p class="feat-body">Every shift. Every market. Every promotion — surfaced the moment it happens. Not reported the next day. Known the moment it changes.</p>
+    <div class="feat-detail">Live pricing · Discount detection<br>Category analysis · All 6 GCC markets<br>Arabic + English · Instant alerts</div>
   </div>
+</div>
 
-  <div class="scroll-hint" id="scroll-hint">
-    <div class="sh-line"></div><span class="sh-txt">Scroll to explore</span>
+<!-- P2: ADS -->
+<div class="panel feat" id="p2">
+  <div class="feat-inner">
+    <div class="feat-label">02 · Ad Surveillance</div>
+    <p class="feat-q">"A campaign tells you everything about where a brand is going. Read theirs before they launch."</p>
+    <p class="feat-body">Every creative. Every market they target. Every message they test. When they surge spend and when they go quiet — all visible, always.</p>
+    <div class="feat-detail">Meta & Google · Creative capture<br>Regional targeting · Campaign timing<br>Spend signals · Dark post detection</div>
   </div>
+</div>
 
-  <div id="globe-state"><div class="gs-dot"></div><span id="gs-txt">Entering the galaxy</span></div>
-
-  <div id="progress">
-    <div class="pdot active" id="pd-0"></div>
-    <div class="pdot" id="pd-1"></div>
-    <div class="pdot" id="pd-2"></div>
-    <div class="pdot" id="pd-3"></div>
-    <div class="pdot" id="pd-4"></div>
-    <div class="pdot" id="pd-5"></div>
-    <div class="pdot" id="pd-6"></div>
-    <div class="pdot" id="pd-7"></div>
-    <div class="pdot" id="pd-8"></div>
-    <div class="pdot" id="pd-9"></div>
-    <div class="pdot" id="pd-10"></div>
-    <div class="pdot" id="pd-11"></div>
+<!-- P3: SOCIAL -->
+<div class="panel feat" id="p3">
+  <div class="feat-inner">
+    <div class="feat-label">03 · Social Pulse</div>
+    <p class="feat-q">"Influence doesn't happen in boardrooms. It happens in comment sections. We track every voice they've enlisted."</p>
+    <p class="feat-body">Every creator aligned with your competitors — reach, engagement, geography. Paid or organic. Before it reaches your audience.</p>
+    <div class="feat-detail">Instagram & TikTok · Creator mapping<br>Paid vs organic detection · Reach metrics<br>GCC geography · Arabic & English</div>
   </div>
+</div>
+
+<!-- P4: SENTIMENT -->
+<div class="panel feat" id="p4">
+  <div class="feat-inner">
+    <div class="feat-label">04 · Sentiment Analysis</div>
+    <p class="feat-q">"Your competitors' customers are telling you exactly where to win. You just need to listen."</p>
+    <p class="feat-body">Every review. Every rating. Every complaint they haven't fixed. Scored, tracked, and surfaced — their weaknesses become your clearest opportunities.</p>
+    <div class="feat-detail">App stores · Review platforms<br>Sentiment scoring · Topic clustering<br>Trend over time · Arabic & English</div>
+  </div>
+</div>
+
+<!-- P5: PR -->
+<div class="panel feat" id="p5">
+  <div class="feat-inner">
+    <div class="feat-label">05 · PR & News</div>
+    <p class="feat-q">"The story breaks before the strategy does. Be reading when it happens."</p>
+    <p class="feat-body">Every mention. Every outlet. Arabic and English. Across all six GCC markets — the moment it publishes, you have it.</p>
+    <div class="feat-detail">GCC media · Arabic & English<br>Real-time capture · Priority scoring<br>Sentiment by story · Source tracking</div>
+  </div>
+</div>
+
+<!-- P6: TRENDS -->
+<div class="panel feat" id="p6">
+  <div class="feat-inner">
+    <div class="feat-label">06 · Search & Trends</div>
+    <p class="feat-q">"Demand doesn't appear suddenly. It builds quietly, then surges. We show you the build."</p>
+    <p class="feat-body">Search interest across six GCC markets tells you where consumers are going before they arrive. Spot the surge. Own the moment before your competitors see it coming.</p>
+    <div class="feat-detail">6 GCC markets · Share of search<br>Spike detection · Trend direction<br>Arabic keywords · Category view</div>
+  </div>
+</div>
+
+<!-- P7: HIRING -->
+<div class="panel feat" id="p7">
+  <div class="feat-inner">
+    <div class="feat-label">07 · Hiring Intelligence</div>
+    <p class="feat-q">"A job posting is a confession. It tells you exactly what a competitor is building next."</p>
+    <p class="feat-body">Every role. Every department surge. Expansion, new products, campaign investment — all visible in their hiring activity, months before any announcement.</p>
+    <div class="feat-detail">Role tracking · Department signals<br>Strategic intent mapping · All platforms<br>GCC locations · Seniority levels</div>
+  </div>
+</div>
+
+<!-- P8: WEB -->
+<div class="panel feat" id="p8">
+  <div class="feat-inner">
+    <div class="feat-label">08 · Web Intelligence</div>
+    <p class="feat-q">"A changed banner. A restructured page. Nothing on their digital surface goes unnoticed."</p>
+    <p class="feat-body">Every change to every page — classified, scored, explained. A new promotion quietly appearing. A navigation restructured overnight. None of it missed.</p>
+    <div class="feat-detail">Change detection · Visual diff<br>Severity scoring · Page classification<br>Continuous monitoring · Full history</div>
+  </div>
+</div>
+
+<!-- P9: AI -->
+<div class="panel feat" id="p9">
+  <div class="feat-inner">
+    <div class="feat-label">09 · AI Analyst</div>
+    <p class="feat-q">"Intelligence is only useful when it's already been understood. Yours arrives interpreted."</p>
+    <p class="feat-body">Every morning, a precise briefing built on real data from your platform. Ask anything. Get an answer instantly. In Arabic or English.</p>
+    <div class="feat-detail">Daily intelligence brief · Live AI chat<br>Built on your real data · Arabic & English<br>WhatsApp delivery · 07:00 GST</div>
+  </div>
+</div>
+
+<!-- P10: ACTIVITY -->
+<div class="panel feat" id="p10">
+  <div class="feat-inner">
+    <div class="feat-label">10 · Activity Overview</div>
+    <p class="feat-q">"Everything that moved. Everything that matters. One place. Every morning."</p>
+    <p class="feat-body">All intelligence unified. Ranked by priority. Filtered to what's relevant. Your team walks in knowing exactly what happened, what it means, and what to do.</p>
+    <div class="feat-detail">Real-time unified feed · Priority ranking<br>All 10 dimensions · WhatsApp alerts<br>Team access · Daily digest</div>
+  </div>
+</div>
+
+<!-- P11: CTA -->
+<div class="panel" id="p11">
+  <div class="cta-pre">// this is what your competitors don't want you to have</div>
+  <h2 class="cta-h">See what they're<br><span class="dim">doing.</span></h2>
+  <p class="cta-sub">We'll configure Andromena around one of your competitors and show you exactly what the system sees. No commitment. Just clarity.</p>
+  <div style="pointer-events:all;">
+    <a href="#" class="btn">Request Access</a>
+    <span class="cta-note">// available for gcc retail brands · response within 24 hours</span>
+  </div>
+</div>
+
+<div id="glbl"><div class="gd"></div><span id="glblt">Entering the galaxy</span></div>
+<div id="shi"><div class="shl"></div><span class="sht">Scroll to begin</span></div>
+
+<div id="prog">
+  <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div><div class="pd" id="pd2"></div>
+  <div class="pd" id="pd3"></div><div class="pd" id="pd4"></div><div class="pd" id="pd5"></div>
+  <div class="pd" id="pd6"></div><div class="pd" id="pd7"></div><div class="pd" id="pd8"></div>
+  <div class="pd" id="pd9"></div><div class="pd" id="pd10"></div><div class="pd" id="pd11"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 10000);
-var renderer = new THREE.WebGLRenderer({canvas: document.getElementById('galaxy'), antialias: true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setClearColor(0x000008);
+// ═══════════════════════════════════════════════════
+// ANDROMENA GALAXY — The Intelligence Universe
+// Scroll-driven camera journey through 11 galaxies
+// ═══════════════════════════════════════════════════
 
-window.addEventListener('resize', function(){
-  camera.aspect = window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+var W=window.innerWidth, H=window.innerHeight;
+var scene=new THREE.Scene();
+var cam=new THREE.PerspectiveCamera(55,W/H,0.1,15000);
+var renderer=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true});
+renderer.setSize(W,H);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setClearColor(0x000005);
+scene.fog=new THREE.FogExp2(0x000005,0.00012);
+
+window.addEventListener('resize',function(){
+  W=window.innerWidth;H=window.innerHeight;
+  cam.aspect=W/H;cam.updateProjectionMatrix();
+  renderer.setSize(W,H);
 });
 
-// STARS — 3 layers for parallax depth
-function makeStars(count, spread, size, color) {
-  var geo = new THREE.BufferGeometry();
-  var pos = new Float32Array(count * 3);
-  for (var i = 0; i < count; i++) {
-    pos[i*3]   = (Math.random()-.5)*spread;
-    pos[i*3+1] = (Math.random()-.5)*spread*.5;
-    pos[i*3+2] = (Math.random()-.5)*spread*2 - 500;
-  }
-  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
-  var mat = new THREE.PointsMaterial({size:size, color:new THREE.Color(color), transparent:true, opacity:.8, sizeAttenuation:true});
-  return new THREE.Points(geo, mat);
+// ── ROUND STAR TEXTURE (no cube artifacts) ──
+function makeStarTex(){
+  var cv=document.createElement('canvas');
+  cv.width=cv.height=32;
+  var cx=cv.getContext('2d');
+  var g=cx.createRadialGradient(16,16,0,16,16,16);
+  g.addColorStop(0,'rgba(255,255,255,1)');
+  g.addColorStop(0.15,'rgba(255,255,255,0.9)');
+  g.addColorStop(0.5,'rgba(255,255,255,0.2)');
+  g.addColorStop(1,'rgba(255,255,255,0)');
+  cx.fillStyle=g;cx.fillRect(0,0,32,32);
+  return new THREE.CanvasTexture(cv);
 }
-var s1 = makeStars(4000, 1200, 0.35, 0x9ab0ff);
-var s2 = makeStars(2000, 800,  0.6,  0xffffff);
-var s3 = makeStars(600,  400,  1.1,  0xffeedd);
-scene.add(s1, s2, s3);
+var starTex=makeStarTex();
 
-// DATA STREAMS — glowing lines rushing toward you
-var streamGroup = new THREE.Group();
-scene.add(streamGroup);
-var streamCols = [0x3377ff, 0x33ffaa, 0xffffff, 0x7799ff, 0x33bbff];
-for (var si = 0; si < 16; si++) {
-  var pts = [];
-  var sx = (Math.random()-.5)*120;
-  var sy = (Math.random()-.5)*40;
-  for (var pi = 0; pi <= 100; pi++) {
-    var t = pi/100;
-    var wv = Math.sin(t*Math.PI*4+si)*3;
-    pts.push(new THREE.Vector3(sx+wv, sy+wv*.5, -t*3200));
+// ── BACKGROUND STARS — deep field, 3 layers ──
+function makeStarField(count,spread,size,color){
+  var geo=new THREE.BufferGeometry();
+  var pos=new Float32Array(count*3);
+  for(var i=0;i<count;i++){
+    pos[i*3]=(Math.random()-.5)*spread;
+    pos[i*3+1]=(Math.random()-.5)*spread*.4;
+    pos[i*3+2]=-Math.random()*spread*3-100;
   }
-  var lg = new THREE.BufferGeometry().setFromPoints(pts);
-  var lm = new THREE.LineBasicMaterial({
-    color: new THREE.Color(streamCols[si%streamCols.length]),
-    transparent: true,
-    opacity: 0.05 + Math.random()*.3
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  var mat=new THREE.PointsMaterial({
+    size:size,color:new THREE.Color(color),
+    map:starTex,alphaMap:starTex,
+    transparent:true,opacity:.7,
+    sizeAttenuation:true,
+    depthWrite:false,
+    blending:THREE.AdditiveBlending
   });
-  streamGroup.add(new THREE.Line(lg, lm));
+  return new THREE.Points(geo,mat);
 }
+var sf1=makeStarField(5000,2000,.18,0x8899cc);  // distant blue
+var sf2=makeStarField(2000,1200,.28,0xffffff);   // mid white
+var sf3=makeStarField(800,600,.42,0xfff5e0);    // near warm
+scene.add(sf1,sf2,sf3);
 
-// GLOW TEXTURE
-function makeGlow(hexColor) {
-  var cv = document.createElement('canvas');
-  cv.width = cv.height = 128;
-  var cx = cv.getContext('2d');
-  var c = new THREE.Color(hexColor);
-  var r=Math.round(c.r*255), g=Math.round(c.g*255), b=Math.round(c.b*255);
-  var grd = cx.createRadialGradient(64,64,0,64,64,64);
+// ── GLOW TEXTURE ──
+function makeGlowTex(hex){
+  var cv=document.createElement('canvas');
+  cv.width=cv.height=256;
+  var cx=cv.getContext('2d');
+  var c=new THREE.Color(hex);
+  var r=Math.round(c.r*255),g=Math.round(c.g*255),b=Math.round(c.b*255);
+  var grd=cx.createRadialGradient(128,128,0,128,128,128);
   grd.addColorStop(0,'rgba('+r+','+g+','+b+',1)');
-  grd.addColorStop(.35,'rgba('+r+','+g+','+b+',.5)');
+  grd.addColorStop(.2,'rgba('+r+','+g+','+b+',.8)');
+  grd.addColorStop(.5,'rgba('+r+','+g+','+b+',.3)');
   grd.addColorStop(1,'rgba('+r+','+g+','+b+',0)');
-  cx.fillStyle=grd; cx.fillRect(0,0,128,128);
+  cx.fillStyle=grd;cx.fillRect(0,0,256,256);
   return new THREE.CanvasTexture(cv);
 }
 
-// INTELLIGENCE GLOBES — 12 particle spheres along Z path
-var GCFG = [
-  {z:0,    r:0xffffff, label:'Entering the galaxy',        rad:25},
-  {z:-350, r:0x88ccff, label:'Extracting price signals',   rad:20},
-  {z:-600, r:0x4488ff, label:'Scanning ad networks',       rad:20},
-  {z:-850, r:0xffddaa, label:'Mapping social networks',    rad:22},
-  {z:-1100,r:0xffcc44, label:'Analyzing sentiment',        rad:20},
-  {z:-1350,r:0x44ffaa, label:'Broadcasting signals',       rad:21},
-  {z:-1600,r:0x44ccff, label:'Reading search patterns',    rad:20},
-  {z:-1850,r:0xaaaaff, label:'Decoding hiring signals',    rad:21},
-  {z:-2100,r:0x9966ff, label:'Scanning digital surfaces',  rad:20},
-  {z:-2350,r:0xffdd66, label:'Neural synthesis active',    rad:22},
-  {z:-2600,r:0xffffff, label:'All signals converging',     rad:26},
-  {z:-2900,r:0x66ffcc, label:'Journey complete',           rad:30},
+// ── GALAXY CONFIGS ──
+// Each has position in Z-space, color, size, label
+var GALAXIES=[
+  {z:0,     col:0xffffff, rad:28, label:'Entering the galaxy',       bright:true},  // hero
+  {z:-420,  col:0x88ccff, rad:22, label:'Pricing Intelligence',      bright:false}, // 01
+  {z:-780,  col:0x4477ff, rad:20, label:'Ad Surveillance',           bright:false}, // 02
+  {z:-1140, col:0xffd888, rad:22, label:'Social Pulse',              bright:false}, // 03
+  {z:-1500, col:0xffbb33, rad:20, label:'Sentiment Analysis',        bright:false}, // 04
+  {z:-1860, col:0x33ff99, rad:21, label:'PR & News',                 bright:false}, // 05
+  {z:-2220, col:0x33ccff, rad:20, label:'Search & Trends',           bright:false}, // 06
+  {z:-2580, col:0xaaaaff, rad:21, label:'Hiring Intelligence',       bright:false}, // 07
+  {z:-2940, col:0x9955ff, rad:20, label:'Web Intelligence',          bright:false}, // 08
+  {z:-3300, col:0xffdd55, rad:24, label:'AI Analyst',                bright:false}, // 09
+  {z:-3660, col:0xffffff, rad:30, label:'Activity Overview',         bright:true},  // 10
+  {z:-4050, col:0x66ffcc, rad:18, label:'Journey complete',          bright:false}, // cta
 ];
 
-var globes = [];
-GCFG.forEach(function(cfg) {
-  var group = new THREE.Group();
-  group.position.z = cfg.z;
+var TOTAL_Z=4200;
 
-  // Offset globes slightly left/right for variety
-  group.position.x = (Math.random()-.5)*30;
-  group.position.y = (Math.random()-.5)*15;
+// ── BUILD EACH GALAXY ──
+var galaxyObjects=[];
 
-  var n = 3500;
-  var pos = new Float32Array(n*3);
-  var cols = new Float32Array(n*3);
-  var col = new THREE.Color(cfg.r);
-  for (var i=0; i<n; i++) {
-    var u=Math.random(), v=Math.random();
-    var th=2*Math.PI*u, ph=Math.acos(2*v-1);
-    var rad = cfg.rad*(0.97+Math.random()*.06);
-    pos[i*3]   = rad*Math.sin(ph)*Math.cos(th);
-    pos[i*3+1] = rad*Math.sin(ph)*Math.sin(th);
-    pos[i*3+2] = rad*Math.cos(ph);
-    var br = .4+Math.random()*.6;
-    cols[i*3]=col.r*br; cols[i*3+1]=col.g*br; cols[i*3+2]=col.b*br;
+GALAXIES.forEach(function(g,idx){
+  var group=new THREE.Group();
+
+  // Slight X offset so galaxies are not all dead center
+  var xOff=(idx%2===0?1:-1)*(10+Math.random()*20);
+  var yOff=(Math.random()-.5)*10;
+  group.position.set(xOff,yOff,g.z);
+
+  // PARTICLE SPHERE — the star/sun of the galaxy
+  var n=4000;
+  var pos=new Float32Array(n*3);
+  var cols=new Float32Array(n*3);
+  var col=new THREE.Color(g.col);
+  for(var i=0;i<n;i++){
+    var u=Math.random(),v=Math.random();
+    var th=2*Math.PI*u,ph=Math.acos(2*v-1);
+    // Mix: tight core + spread halo
+    var layerR=Math.random()<.3
+      ? g.rad*(0.1+Math.random()*.4)   // core
+      : g.rad*(0.75+Math.random()*.3); // surface
+    pos[i*3]=layerR*Math.sin(ph)*Math.cos(th);
+    pos[i*3+1]=layerR*Math.sin(ph)*Math.sin(th);
+    pos[i*3+2]=layerR*Math.cos(ph);
+    var br=.3+Math.random()*.7;
+    cols[i*3]=col.r*br;cols[i*3+1]=col.g*br;cols[i*3+2]=col.b*br;
   }
-  var geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
-  geo.setAttribute('color', new THREE.BufferAttribute(cols,3));
-  var mat = new THREE.PointsMaterial({size:.7, vertexColors:true, transparent:true, opacity:.4, sizeAttenuation:true});
-  var pts = new THREE.Points(geo, mat);
-  group.add(pts);
-
-  // Glow sprite
-  var sm = new THREE.SpriteMaterial({map:makeGlow(cfg.r), transparent:true, opacity:.08, blending:THREE.AdditiveBlending});
-  var sp = new THREE.Sprite(sm);
-  sp.scale.set(cfg.rad*6, cfg.rad*6, 1);
-  group.add(sp);
-
-  scene.add(group);
-  globes.push({group:group, pts:pts, glow:sp, cfg:cfg});
-});
-
-// NEBULA CLOUDS between destinations
-var nebCols = [0x001133, 0x003322, 0x110033, 0x332200];
-for (var ni=0; ni<25; ni++) {
-  var nm = new THREE.SpriteMaterial({
-    map: makeGlow(nebCols[ni%nebCols.length]),
-    transparent:true, opacity:.03,
+  var geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(cols,3));
+  var mat=new THREE.PointsMaterial({
+    size:.5,vertexColors:true,
+    map:starTex,alphaMap:starTex,
+    transparent:true,opacity:.2,
+    sizeAttenuation:true,
+    depthWrite:false,
     blending:THREE.AdditiveBlending
   });
-  var ns = new THREE.Sprite(nm);
-  ns.position.set((Math.random()-.5)*300, (Math.random()-.5)*120, -Math.random()*3000);
-  ns.scale.set(200+Math.random()*300, 120+Math.random()*180, 1);
+  var pts=new THREE.Points(geo,mat);
+  group.add(pts);
+
+  // GLOW — big soft corona
+  var glowMat=new THREE.SpriteMaterial({
+    map:makeGlowTex(g.col),
+    transparent:true,opacity:.06,
+    blending:THREE.AdditiveBlending,
+    depthWrite:false
+  });
+  var glow=new THREE.Sprite(glowMat);
+  glow.scale.set(g.rad*8,g.rad*8,1);
+  group.add(glow);
+
+  // MINI GALAXY CLOUD — surrounding stars
+  var mn=800;
+  var mpos=new Float32Array(mn*3);
+  for(var i=0;i<mn;i++){
+    var ang=Math.random()*Math.PI*2;
+    var dist=g.rad*1.2+Math.random()*g.rad*3;
+    var tilt=(Math.random()-.5)*g.rad*.5;
+    mpos[i*3]=Math.cos(ang)*dist;
+    mpos[i*3+1]=tilt;
+    mpos[i*3+2]=Math.sin(ang)*dist*.4;
+  }
+  var mgeo=new THREE.BufferGeometry();
+  mgeo.setAttribute('position',new THREE.BufferAttribute(mpos,3));
+  var mmat=new THREE.PointsMaterial({
+    size:.2,color:new THREE.Color(g.col),
+    map:starTex,alphaMap:starTex,
+    transparent:true,opacity:.15,
+    sizeAttenuation:true,
+    depthWrite:false,
+    blending:THREE.AdditiveBlending
+  });
+  group.add(new THREE.Points(mgeo,mmat));
+
+  scene.add(group);
+  galaxyObjects.push({group:group,pts:pts,glow:glow,mat:mat,glowMat:glowMat,cfg:g});
+});
+
+// ── DATA STREAMS ──
+// Glowing lines connecting galaxies — the path
+var streamGroup=new THREE.Group();
+scene.add(streamGroup);
+
+var sCols=[0x3366ff,0x33ffaa,0x6644ff,0x33bbff,0xffffff,0xffaa33];
+for(var si=0;si<20;si++){
+  var spts=[];
+  var sx=(Math.random()-.5)*80;
+  var sy=(Math.random()-.5)*25;
+  for(var pi=0;pi<=120;pi++){
+    var t=pi/120;
+    var wx=Math.sin(t*Math.PI*5+si*.7)*4;
+    var wy=Math.cos(t*Math.PI*3+si*.5)*2;
+    spts.push(new THREE.Vector3(sx+wx,sy+wy,-t*TOTAL_Z));
+  }
+  var slg=new THREE.BufferGeometry().setFromPoints(spts);
+  var slm=new THREE.LineBasicMaterial({
+    color:new THREE.Color(sCols[si%sCols.length]),
+    transparent:true,
+    opacity:.04+Math.random()*.12,
+    blending:THREE.AdditiveBlending,
+    depthWrite:false
+  });
+  streamGroup.add(new THREE.Line(slg,slm));
+}
+
+// ── NEBULA CLOUDS between galaxies ──
+var nebCols=[0x000833,0x003322,0x110022,0x221100,0x002244];
+for(var ni=0;ni<40;ni++){
+  var nm=new THREE.SpriteMaterial({
+    map:makeGlowTex(nebCols[ni%nebCols.length]),
+    transparent:true,opacity:.025,
+    blending:THREE.AdditiveBlending,
+    depthWrite:false
+  });
+  var ns=new THREE.Sprite(nm);
+  ns.position.set(
+    (Math.random()-.5)*400,
+    (Math.random()-.5)*150,
+    -Math.random()*TOTAL_Z
+  );
+  ns.scale.set(300+Math.random()*400,180+Math.random()*250,1);
   scene.add(ns);
 }
 
-// CAMERA + SCROLL
-camera.position.set(0, 0, 80);
-var TOTAL_DEPTH = 3100;
-var PANELS = ['panel-hero','panel-1','panel-2','panel-3','panel-4','panel-5','panel-6','panel-7','panel-8','panel-9','panel-10','panel-cta'];
-var LABELS = GCFG.map(function(g){return g.label;});
+// ── CAMERA SETUP ──
+cam.position.set(0,0,120);
 
-var scrollProg = 0, targetZ = 80, currentZ = 80;
-var mxT=0, myT=0, mx=0, my=0;
-var frame=0;
+var PANELS=12;
+var targetZ=120,currentZ=120;
+var mxT=0,myT=0,mx=0,my=0;
+var frame=0,scrollY=0;
 
-document.addEventListener('mousemove', function(e){
-  mxT = (e.clientX/window.innerWidth-.5)*25;
-  myT = (e.clientY/window.innerHeight-.5)*-12;
+// ── CURSOR ──
+var cur=document.getElementById('cur');
+var curR=document.getElementById('cur-ring');
+var crx=0,cry=0,cx2=0,cy2=0;
+document.addEventListener('mousemove',function(e){
+  crx=e.clientX;cry=e.clientY;
+  mxT=(e.clientX/W-.5)*35;
+  myT=(e.clientY/H-.5)*-18;
 });
+(function trackCursor(){
+  cx2+=(crx-cx2)*.12;cy2+=(cry-cy2)*.12;
+  if(cur){cur.style.left=crx+'px';cur.style.top=cry+'px';}
+  if(curR){curR.style.left=cx2+'px';curR.style.top=cy2+'px';}
+  requestAnimationFrame(trackCursor);
+})();
 
-window.addEventListener('scroll', function(){
-  var maxS = document.body.scrollHeight - window.innerHeight;
-  scrollProg = window.scrollY / maxS;
-  targetZ = 80 - scrollProg * TOTAL_DEPTH;
-  if(window.scrollY>60) document.getElementById('scroll-hint').classList.add('gone');
+// ── SCROLL ──
+window.addEventListener('scroll',function(){
+  scrollY=window.scrollY;
+  var maxS=document.getElementById('driver').offsetHeight-H;
+  var prog=scrollY/maxS;
+  targetZ=120-prog*TOTAL_Z;
+  if(scrollY>80)document.getElementById('shi').classList.add('gone');
+  if(scrollY>60)document.getElementById('nav').classList.add('solid');
+  else document.getElementById('nav').classList.remove('solid');
 },{passive:true});
 
-function updateUI(camZ) {
-  var n = PANELS.length;
-  var secD = TOTAL_DEPTH / n;
-  var dist = 80 - camZ;
-  var sec = Math.round(dist / secD);
-  sec = Math.max(0, Math.min(n-1, sec));
+// ── PANEL LOGIC ──
+var panelEls=[];
+for(var pi=0;pi<PANELS;pi++) panelEls.push(document.getElementById('p'+pi));
+var dotEls=[];
+for(var di=0;di<PANELS;di++) dotEls.push(document.getElementById('pd'+di));
 
-  PANELS.forEach(function(id,i){
-    var el = document.getElementById(id);
-    if(!el) return;
-    if(i===sec) el.classList.add('visible');
-    else el.classList.remove('visible');
+var lastPanel=-1;
+function updatePanels(camZ){
+  // Find closest galaxy to camera
+  var closest=0,minD=99999;
+  GALAXIES.forEach(function(g,i){
+    var d=Math.abs(camZ-g.z);
+    if(d<minD){minD=d;closest=i;}
   });
 
-  for(var i=0;i<12;i++){
-    var d=document.getElementById('pd-'+i);
-    if(d) d.classList.toggle('active', i===sec);
+  if(closest!==lastPanel){
+    lastPanel=closest;
+    // Panels
+    panelEls.forEach(function(el,i){
+      if(!el)return;
+      if(i===closest)el.classList.add('on');
+      else el.classList.remove('on');
+    });
+    // Dots
+    dotEls.forEach(function(el,i){
+      if(!el)return;
+      el.classList.toggle('on',i===closest);
+    });
+    // Label
+    var lbl=document.getElementById('glblt');
+    if(lbl)lbl.textContent=GALAXIES[closest].label;
   }
-  var lbl=document.getElementById('gs-txt');
-  if(lbl && LABELS[sec]) lbl.textContent=LABELS[sec];
 }
 
 // Show hero on load
 setTimeout(function(){
-  var h=document.getElementById('panel-hero');
-  if(h) h.classList.add('visible');
-},400);
+  var h=document.getElementById('p0');
+  if(h)h.classList.add('on');
+  var d=document.getElementById('pd0');
+  if(d)d.classList.add('on');
+},500);
 
+// ── RENDER LOOP ──
 function animate(){
   frame++;
   requestAnimationFrame(animate);
 
-  // Smooth camera
-  currentZ += (targetZ - currentZ) * 0.055;
-  mx += (mxT - mx) * 0.04;
-  my += (myT - my) * 0.04;
+  // Smooth camera Z
+  currentZ+=(targetZ-currentZ)*.05;
 
-  camera.position.z = currentZ;
-  camera.position.x += (mx*.08 - camera.position.x) * .06;
-  camera.position.y += (my*.08 - camera.position.y) * .06;
-  camera.lookAt(camera.position.x*.3, camera.position.y*.3, currentZ - 150);
+  // Smooth mouse
+  mx+=(mxT-mx)*.04;
+  my+=(myT-my)*.04;
 
-  // Globe proximity brightness
-  globes.forEach(function(g,i){
-    g.group.rotation.y += .002 + i*.0001;
-    g.group.rotation.x += .0008;
-    var d = Math.abs(currentZ - g.cfg.z);
-    var prox = Math.max(0, 1 - d/250);
-    g.pts.material.opacity = .15 + prox*.85;
-    g.pts.material.size = .5 + prox*1.5;
-    g.glow.material.opacity = .04 + prox*.4;
-    // Scale glow as you approach
-    var sc = g.cfg.rad*(4 + prox*4);
-    g.glow.scale.set(sc, sc, 1);
+  // Camera position
+  cam.position.z=currentZ;
+  cam.position.x+=(mx*.06-cam.position.x)*.05;
+  cam.position.y+=(my*.06-cam.position.y)*.05;
+
+  // Camera looks ahead along path
+  cam.lookAt(
+    cam.position.x*.2,
+    cam.position.y*.2,
+    currentZ-200
+  );
+
+  // Galaxy animations
+  galaxyObjects.forEach(function(g,i){
+    g.group.rotation.y+=.0015+i*.00005;
+    g.group.rotation.x+=.0006;
+
+    // Distance from camera
+    var dist=Math.abs(currentZ-g.cfg.z);
+    var prox=Math.max(0,1-dist/350);
+    var proxSoft=Math.max(0,1-dist/800);
+
+    // Particles brighten as you approach
+    g.mat.opacity=.08+prox*.92;
+    g.mat.size=.3+prox*1.8;
+
+    // Glow blooms
+    g.glowMat.opacity=.02+proxSoft*.18+prox*.25;
+    var sc=g.cfg.rad*(5+prox*8+proxSoft*3);
+    g.glow.scale.set(sc,sc,1);
   });
 
-  // Star parallax
-  s1.position.x = mx*.015; s1.position.y = my*.015;
-  s2.position.x = mx*.03;  s2.position.y = my*.03;
-  s3.position.x = mx*.06;  s3.position.y = my*.06;
+  // Star field parallax — each layer at different speed
+  sf1.position.x=mx*.008;sf1.position.y=my*.008;
+  sf2.position.x=mx*.018;sf2.position.y=my*.018;
+  sf3.position.x=mx*.035;sf3.position.y=my*.035;
 
-  // Stream warp effect — brighter when moving fast
-  var speed = Math.abs(targetZ - currentZ);
-  streamGroup.children.forEach(function(line, i){
-    line.material.opacity = .04 + Math.sin(frame*.015+i)*.02 + speed*.003;
+  // Streams pulse — warp brighter when moving fast
+  var speed=Math.abs(targetZ-currentZ);
+  streamGroup.children.forEach(function(line,i){
+    line.material.opacity=.02+Math.sin(frame*.012+i*.4)*.015+speed*.004;
   });
 
-  updateUI(currentZ);
-  renderer.render(scene, camera);
+  updatePanels(currentZ);
+  renderer.render(scene,cam);
 }
 animate();
 </script>
