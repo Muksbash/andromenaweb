@@ -1,25 +1,28 @@
 {
-  "name": "andromenaweb",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "andromena-website",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Muksbash/andromenaweb.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Muksbash/andromenaweb/issues"
-  },
-  "homepage": "https://github.com/Muksbash/andromenaweb#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "framer-motion": "^11.18.2",
+    "gsap": "^3.15.0",
+    "next": "^14.2.15",
+    "react": "^18",
+    "react-dom": "^18",
+    "three": "^0.168.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/three": "^0.168.0",
+    "typescript": "^5"
   }
 }
