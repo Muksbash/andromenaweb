@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import AndromenaIcon from '@/components/AndromenaIcon'
+const Icon = AndromenaIcon as any
 
 // ─────────────────────────────────────────────
 // CONSTANTS
@@ -394,8 +395,8 @@ export default function Home() {
       <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',zIndex:0,pointerEvents:'none'}}/>
 
       {/* Nav */}
-      <nav style={{position:'absolute',top:0,left:0,right:0,zIndex:100,padding:'28px 44px 0',display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'start'}}>
-        <div style={{display:'flex',flexDirection:'column',gap:5}}>
+      <nav className="site-nav" style={{position:'absolute',top:0,left:0,right:0,zIndex:100,padding:'28px 44px 0',display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'start'}}>
+        <div style={{display:'flex',flexDirection:'column',gap:5}} className="nav-links">
           {['Features','How It Works','Intelligence'].map(l=>(
             <a key={l} href="#" style={{fontSize:14,color:'rgba(255,255,255,0.8)',letterSpacing:'0.02em',cursor:'pointer',textDecoration:'none',fontFamily:'var(--font-body)',transition:'color 0.2s'}}
               onMouseEnter={e=>(e.target as HTMLElement).style.color='#fff'}
@@ -404,7 +405,7 @@ export default function Home() {
           ))}
         </div>
         <div style={{fontFamily:"'Grift',sans-serif",fontSize:20,fontWeight:700,letterSpacing:'0.14em',color:'rgba(255,255,255,0.82)',textAlign:'center',display:'flex',alignItems:'center',justifyContent:'center',gap:12}}>
-          <AndromenaIcon size={42} />
+          <Icon size={42} />
           ANDROMENA
         </div>
         <div style={{display:'flex',justifyContent:'flex-end'}}>
@@ -419,19 +420,19 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <div style={{position:'absolute',inset:0,zIndex:2,display:'grid',gridTemplateColumns:'1fr 1fr',alignItems:'center',padding:'80px 48px 0',opacity:'var(--hero-op)' as any}}>
+      <div style={{position:'absolute',inset:0,zIndex:2,display:'grid',gridTemplateColumns:'1fr 1fr',alignItems:'center',padding:'80px 48px 0',opacity:'var(--hero-op)' as any}} className="hero-section">
         <div style={{paddingRight:40,opacity:heroVisible?1:0,transform:heroVisible?'translateY(0)':'translateY(28px)',transition:'opacity 1.4s cubic-bezier(0.16,1,0.3,1),transform 1.4s cubic-bezier(0.16,1,0.3,1)'}}>
-          <h1 style={{fontFamily:"'Grift',sans-serif",fontSize:'clamp(28px,3.8vw,52px)',fontWeight:700,lineHeight:1.08,letterSpacing:'-0.035em',color:'rgba(255,255,255,0.82)',marginBottom:4,whiteSpace:'nowrap'}}>Your competitors are live.</h1>
-          <div style={{fontFamily:"'Dothed',monospace",fontSize:'clamp(26px,3.4vw,50px)',color:'rgba(255,255,255,0.78)',letterSpacing:'0.04em',marginBottom:24,lineHeight:1.1}}>So is your intelligence.</div>
+          <h1 style={{fontFamily:"'Grift',sans-serif",fontSize:'clamp(28px,3.8vw,52px)',fontWeight:700,lineHeight:1.08,letterSpacing:'-0.035em',color:'rgba(255,255,255,0.82)',marginBottom:4,whiteSpace:'nowrap'}} className="hero-h1">Your competitors are live.</h1>
+          <div style={{fontFamily:"'Dothed',monospace",fontSize:'clamp(26px,3.4vw,50px)',color:'rgba(255,255,255,0.78)',letterSpacing:'0.04em',marginBottom:24,lineHeight:1.1}} className="hero-sub">So is your intelligence.</div>
           <p style={{fontSize:'clamp(12px,1.2vw,15px)',color:'rgba(255,255,255,0.55)',lineHeight:1.8,maxWidth:420,marginBottom:36,fontFamily:'var(--font-body)'}}>A live AI dashboard tracking your competitors 24/7 — ads, pricing, hiring, press, search and more. Not a report. A radar that never turns off.</p>
-          <div style={{display:'flex',gap:10,alignItems:'center'}}>
+          <div style={{display:'flex',gap:10,alignItems:'center'}} className="hero-btns">
             <button style={{background:'rgba(255,255,255,0.78)',color:'#080808',border:'none',padding:'11px 22px',fontSize:10,fontFamily:'var(--font-body)',fontWeight:600,letterSpacing:'0.1em',cursor:'pointer',textTransform:'uppercase',display:'inline-flex',alignItems:'center',gap:8}}>
               <span style={{width:5,height:5,borderRadius:'50%',background:'#080808',opacity:0.4}}/>Request Access
             </button>
             <button style={{background:'transparent',border:'1px solid rgba(255,255,255,0.18)',color:'rgba(255,255,255,0.82)',padding:'11px 22px',fontSize:10,fontFamily:'var(--font-body)',fontWeight:500,letterSpacing:'0.1em',cursor:'pointer',textTransform:'uppercase'}}>See How It Works <span style={{opacity:0.4}}>→</span></button>
           </div>
         </div>
-        <div style={{position:'absolute',bottom:24,left:48,right:48,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <div style={{position:'absolute',bottom:24,left:48,right:48,display:'flex',justifyContent:'space-between',alignItems:'center'}} className="hero-bottom">
           <span style={{fontSize:10,color:'rgba(255,255,255,0.50)',letterSpacing:'0.14em',fontFamily:'var(--font-body)'}}>LIVE AI INTELLIGENCE · GCC</span>
           <div style={{display:'flex',alignItems:'center',gap:7}}>
             <span style={{width:4,height:4,borderRadius:'50%',background:'#fff',opacity:0.25,animation:'blink 2.8s ease-in-out infinite',display:'inline-block'}}/>
@@ -441,7 +442,7 @@ export default function Home() {
       </div>
 
       {/* Section 1 */}
-      <div style={{position:'absolute',inset:0,zIndex:3,display:'flex',alignItems:'center',padding:'120px 64px 80px',pointerEvents:'none',opacity:'var(--s1-op)' as any}}>
+      <div style={{position:'absolute',inset:0,zIndex:3,display:'flex',alignItems:'center',padding:'120px 64px 80px',pointerEvents:'none',opacity:'var(--s1-op)' as any}} className="s1-section">
         <div style={{display:'flex',flexDirection:'column',gap:48}}>
           <h2 style={{margin:0,fontWeight:'normal',lineHeight:1.06}}>
             <span style={{display:'block',marginBottom:6,fontFamily:"'Grift',sans-serif",fontSize:'clamp(28px,3.8vw,52px)',fontWeight:700,letterSpacing:'-0.035em',color:'rgba(255,255,255,0.82)'}}>Your competitors move in real time.</span>
@@ -460,11 +461,11 @@ export default function Home() {
 
       {/* Section 2 */}
       <div style={{position:'absolute',inset:0,zIndex:4,pointerEvents:'none',display:'flex',flexDirection:'column',justifyContent:'center',overflow:'hidden',opacity:'var(--s2-op)' as any}}>
-        <p style={{fontSize:'clamp(22px,2.8vw,42px)',fontWeight:500,lineHeight:1.55,letterSpacing:'-0.02em',padding:'0 64px',margin:'0 0 48px 0',width:'100%',boxSizing:'border-box' as any,wordBreak:'break-word' as any,overflowWrap:'break-word' as any}}>
+        <p style={{fontSize:'clamp(22px,2.8vw,42px)',fontWeight:500,lineHeight:1.55,letterSpacing:'-0.02em',padding:'0 64px',margin:'0 0 48px 0',width:'100%',boxSizing:'border-box' as any,wordBreak:'break-word' as any,overflowWrap:'break-word' as any}} className="letter-reveal-p">
           <LetterReveal text={HERO_TEXT} heroRef={heroRef}/>
         </p>
         <div style={{flexShrink:0,width:'100%'}}>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:0,width:'100%'}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:0,width:'100%'}} className="cards-grid">
             {cards.map((card,i)=><CardItem key={i} card={card} index={i}/>)}
           </div>
         </div>
@@ -493,6 +494,27 @@ export default function Home() {
         *{box-sizing:border-box}
         #pricing-panel::-webkit-scrollbar{display:none}
         :root{--hero-op:1;--s1-op:0;--s2-op:0;--card-slide:0;--mod-op:0;--mod-float:0px;--cta-op:0;--cta-burst-op:1;--cta-burst-scale:1}
+
+        @media(max-width:768px){
+          .site-nav{padding:18px 20px 0!important;grid-template-columns:auto 1fr!important}
+          .nav-links{display:none!important}
+          .nav-cta{font-size:9px!important;padding:8px 14px!important}
+          .hero-section{grid-template-columns:1fr!important;padding:90px 24px 0!important;align-items:flex-start!important}
+          .hero-h1{white-space:normal!important;font-size:clamp(28px,8vw,40px)!important}
+          .hero-sub{font-size:clamp(20px,6vw,32px)!important}
+          .hero-btns{flex-direction:column!important;align-items:flex-start!important}
+          .hero-bottom{left:24px!important;right:24px!important}
+          .s1-section{padding:80px 24px 40px!important}
+          .letter-reveal-p{padding:0 24px!important;font-size:clamp(16px,4.5vw,26px)!important;margin-bottom:32px!important}
+          .cards-grid{grid-template-columns:repeat(2,1fr)!important}
+          #mod-display{left:10%!important;right:auto!important;width:80%!important}
+          .pricing-grid{grid-template-columns:1fr!important;padding:0!important}
+          .pricing-left{position:relative!important;height:auto!important;padding:80px 24px 40px!important;border-right:none!important;border-bottom:1px solid rgba(255,255,255,0.06)!important}
+          .pricing-right{padding:40px 24px 80px!important}
+          .plan-bullets{grid-template-columns:1fr!important}
+          .footer-grid{grid-template-columns:1fr!important;gap:40px!important;margin-bottom:60px!important}
+          .footer-bottom{flex-direction:column!important;gap:12px!important;align-items:center!important}
+        }
       `}</style>
     </div>
   )
@@ -604,10 +626,10 @@ function PricingPanel({pricingRef}:{pricingRef:React.MutableRefObject<number>}) 
   return (
     <div id="pricing-panel" ref={panelRef} style={{position:'fixed',top:0,left:0,right:0,bottom:0,width:'100vw',height:'100vh',zIndex:20,background:'#080808',overflowY:'scroll',transform:'translateY(100vh)',visibility:'hidden',willChange:'transform',outline:'none',scrollbarWidth:'none'} as any}>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1.4fr',alignItems:'start',padding:'0 0 0 64px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1.4fr',alignItems:'start',padding:'0 0 0 64px'}} className="pricing-grid">
 
         {/* LEFT sticky */}
-        <div style={{position:'sticky',top:0,height:'100vh',display:'flex',flexDirection:'column',justifyContent:'center',paddingRight:80}}>
+        <div style={{position:'sticky',top:0,height:'100vh',display:'flex',flexDirection:'column',justifyContent:'center',paddingRight:80}} className="pricing-left">
           <div style={{fontFamily:"'Dothed',monospace",fontSize:10,color:'rgba(255,255,255,0.65)',letterSpacing:'0.2em',marginBottom:32}}>// PLANS</div>
           <h2 style={{margin:'0 0 28px 0',lineHeight:1.05}}>
             <span style={{display:'block',fontFamily:"'Grift',sans-serif",fontSize:'clamp(32px,3.8vw,56px)',fontWeight:700,letterSpacing:'-0.04em',color:'rgba(255,255,255,0.75)'}}>Not a dashboard</span>
@@ -623,7 +645,7 @@ function PricingPanel({pricingRef}:{pricingRef:React.MutableRefObject<number>}) 
         </div>
 
         {/* RIGHT scrollable */}
-        <div style={{padding:'120px 64px 120px 64px'}}>
+        <div style={{padding:'120px 64px 120px 64px'}} className="pricing-right">
           <div style={{display:'flex',flexDirection:'column',gap:1,marginBottom:100}}>
             {PLANS.map((plan,i)=>(
               <div key={i} style={{borderTop:i===0?'1px solid rgba(255,255,255,0.12)':'none',borderBottom:'1px solid rgba(255,255,255,0.08)',padding:'40px 0',position:'relative'}}>
@@ -635,7 +657,7 @@ function PricingPanel({pricingRef}:{pricingRef:React.MutableRefObject<number>}) 
                   {plan.featured&&<span style={{fontFamily:"'Dothed',monospace",fontSize:9,color:'rgba(255,255,255,0.78)',letterSpacing:'0.16em',border:'1px solid rgba(255,255,255,0.42)',padding:'4px 10px'}}>MOST POPULAR</span>}
                 </div>
                 <p style={{fontFamily:'var(--font-body)',fontSize:12,color:'rgba(255,255,255,0.55)',marginBottom:24,fontStyle:'italic'}}>"{plan.tagline}"</p>
-                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px 24px',marginBottom:28}}>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px 24px',marginBottom:28}} className="plan-bullets">
                   {plan.bullets.map((b,j)=>(
                     <div key={j} style={{display:'flex',alignItems:'flex-start',gap:8}}>
                       <span style={{fontFamily:"'Dothed',monospace",fontSize:10,color:'rgba(255,255,255,0.65)',marginTop:2,flexShrink:0}}>—</span>
@@ -678,10 +700,10 @@ function PricingPanel({pricingRef}:{pricingRef:React.MutableRefObject<number>}) 
 
       {/* Footer */}
       <footer style={{background:'#080808',borderTop:'1px solid rgba(255,255,255,0.08)',padding:'72px 64px 0',overflow:'visible'}}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:48,marginBottom:80}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:48,marginBottom:80}} className="footer-grid">
           <div>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <AndromenaIcon size={38} />
+              <Icon size={38} />
               <div style={{fontFamily:"'Grift',sans-serif",fontSize:19,fontWeight:700,letterSpacing:'0.14em',color:'rgba(255,255,255,0.80)'}}>ANDROMENA</div>
             </div>
             <p style={{fontFamily:'var(--font-body)',fontSize:13,color:'rgba(255,255,255,0.62)',lineHeight:1.85,maxWidth:260}}>Live AI competitor intelligence for the GCC. Know what they're doing before they announce it.</p>
@@ -706,7 +728,7 @@ function PricingPanel({pricingRef}:{pricingRef:React.MutableRefObject<number>}) 
           </div>
         </div>
         <WatermarkText/>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'20px 0',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'20px 0',borderTop:'1px solid rgba(255,255,255,0.06)'}} className="footer-bottom">
           <span style={{fontFamily:'var(--font-body)',fontSize:11,color:'rgba(255,255,255,0.18)',letterSpacing:'0.06em'}}>© 2026 ANDROMENA. ALL RIGHTS RESERVED.</span>
           <div style={{display:'flex',alignItems:'center',gap:7}}>
             <span style={{width:4,height:4,borderRadius:'50%',background:'#fff',opacity:0.2,animation:'blink 2.8s ease-in-out infinite',display:'inline-block'}}/>
