@@ -51,13 +51,33 @@ function useVirtualScroll() {
     document.body.style.overflow = 'hidden'
     document.documentElement.style.overflow = 'hidden'
 
+    // Panel scroll state — declared early so touch handlers can access them
+    let panelPos    = 0
+    let panelTarget = 0
+    let tyLerp      = 100
+    let panelAtTop  = false
+
     let ty = 0, tyActive = false
     const onTouchStart = (e: TouchEvent) => { ty = e.touches[0].clientY; tyActive = true }
     const onTouchMove  = (e: TouchEvent) => {
       if (!tyActive) return
       const dy = ty - e.touches[0].clientY
       ty = e.touches[0].clientY
-      target.current = clamp(target.current + dy * TSCALE, 0, TOTAL)
+      if (panelAtTop) {
+        const panel = document.getElementById('pricing-panel')
+        const scrollH = panel ? panel.scrollHeight : 0
+        const clientH = panel ? panel.clientHeight : 0
+        const max = scrollH > clientH ? scrollH - clientH : 5000
+        if (dy < 0 && panelTarget <= 0) {
+          panelAtTop = false
+          target.current = clamp(target.current + dy * TSCALE * 8, 0, TOTAL)
+        } else {
+          panelTarget = clamp(panelTarget + dy * 2.5, 0, max)
+        }
+      } else {
+        target.current = clamp(target.current + dy * TSCALE, 0, TOTAL)
+        if (dy < 0) { panelPos = 0; panelTarget = 0 }
+      }
     }
     const onTouchEnd = () => { tyActive = false }
     const onKey = (e: KeyboardEvent) => {
@@ -72,15 +92,6 @@ function useVirtualScroll() {
     window.addEventListener('touchmove',  onTouchMove,  { passive: false })
     window.addEventListener('touchend',   onTouchEnd)
     window.addEventListener('keydown',    onKey)
-
-    // Single panel scroll accumulator
-    let panelPos    = 0
-    let panelTarget = 0
-    let tyLerp      = 100  // starts fully off-screen bottom
-
-    // Panel is visually at top when translateY = 0
-    // Track this directly instead of relying on lerped pricingRef
-    let panelAtTop = false
 
     // Single wheel handler that does everything — no swapping
     const onWheel = (e: WheelEvent) => {
