@@ -420,7 +420,7 @@ export default function Home() {
           ANDROMENA
         </div>
         <div style={{display:'flex',justifyContent:'flex-end'}}>
-          <button style={{position:'relative',background:'transparent',border:'none',color:'rgba(255,255,255,0.75)',padding:'10px 20px',fontSize:11,fontFamily:'var(--font-body)',fontWeight:500,letterSpacing:'0.06em',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:10}}>
+          <button className="nav-cta" style={{position:'relative',background:'transparent',border:'none',color:'rgba(255,255,255,0.75)',padding:'10px 20px',fontSize:11,fontFamily:'var(--font-body)',fontWeight:500,letterSpacing:'0.06em',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:10}}>
             {([{t:0,l:0,bt:'borderTop',bl:'borderLeft'},{t:0,r:0,bt:'borderTop',bl:'borderRight'},{b:0,l:0,bt:'borderBottom',bl:'borderLeft'},{b:0,r:0,bt:'borderBottom',bl:'borderRight'}] as any[]).map((pos,i)=>(
               <span key={i} style={{position:'absolute',...(pos.t!==undefined?{top:0}:{}),...(pos.b!==undefined?{bottom:0}:{}),...(pos.l!==undefined?{left:0}:{}),...(pos.r!==undefined?{right:0}:{}),width:10,height:10,[pos.bt]:'1px solid rgba(255,255,255,0.65)',[pos.bl]:'1px solid rgba(255,255,255,0.65)'}}/>
             ))}
