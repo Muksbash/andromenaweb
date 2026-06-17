@@ -422,8 +422,10 @@ export default function Home() {
       {/* Hero */}
       <div style={{position:'absolute',inset:0,zIndex:2,display:'grid',gridTemplateColumns:'1fr 1fr',alignItems:'center',padding:'80px 48px 0',opacity:'var(--hero-op)' as any}} className="hero-section">
         <div style={{paddingRight:40,opacity:heroVisible?1:0,transform:heroVisible?'translateY(0)':'translateY(28px)',transition:'opacity 1.4s cubic-bezier(0.16,1,0.3,1),transform 1.4s cubic-bezier(0.16,1,0.3,1)'}}>
-          <h1 style={{fontFamily:"'Grift',sans-serif",fontSize:'clamp(28px,3.8vw,52px)',fontWeight:700,lineHeight:1.08,letterSpacing:'-0.035em',color:'rgba(255,255,255,0.82)',marginBottom:4,whiteSpace:'nowrap'}} className="hero-h1">Your competitors are live.</h1>
-          <div style={{fontFamily:"'Dothed',monospace",fontSize:'clamp(26px,3.4vw,50px)',color:'rgba(255,255,255,0.78)',letterSpacing:'0.04em',marginBottom:24,lineHeight:1.1}} className="hero-sub">So is your intelligence.</div>
+          <div className="hero-title-wrap">
+            <h1 style={{fontFamily:"'Grift',sans-serif",fontSize:'clamp(28px,3.8vw,52px)',fontWeight:700,lineHeight:1.08,letterSpacing:'-0.035em',color:'rgba(255,255,255,0.82)',marginBottom:4,whiteSpace:'nowrap',display:'block'}} className="hero-h1">Your competitors are live.</h1>
+            <div style={{fontFamily:"'Dothed',monospace",fontSize:'clamp(26px,3.4vw,50px)',color:'rgba(255,255,255,0.78)',letterSpacing:'0.04em',marginBottom:24,lineHeight:1.1,display:'block'}} className="hero-sub">So is your intelligence.</div>
+          </div>
           <p style={{fontSize:'clamp(12px,1.2vw,15px)',color:'rgba(255,255,255,0.55)',lineHeight:1.8,maxWidth:420,marginBottom:36,fontFamily:'var(--font-body)'}}>A live AI dashboard tracking your competitors 24/7 — ads, pricing, hiring, press, search and more. Not a report. A radar that never turns off.</p>
           <div style={{display:'flex',gap:10,alignItems:'center'}} className="hero-btns">
             <button style={{background:'rgba(255,255,255,0.78)',color:'#080808',border:'none',padding:'11px 22px',fontSize:10,fontFamily:'var(--font-body)',fontWeight:600,letterSpacing:'0.1em',cursor:'pointer',textTransform:'uppercase',display:'inline-flex',alignItems:'center',gap:8}}>
@@ -444,9 +446,9 @@ export default function Home() {
       {/* Section 1 */}
       <div style={{position:'absolute',inset:0,zIndex:3,display:'flex',alignItems:'center',padding:'120px 64px 80px',pointerEvents:'none',opacity:'var(--s1-op)' as any}} className="s1-section">
         <div style={{display:'flex',flexDirection:'column',gap:48}}>
-          <h2 style={{margin:0,fontWeight:'normal',lineHeight:1.06}}>
-            <span style={{display:'block',marginBottom:6,fontFamily:"'Grift',sans-serif",fontSize:'clamp(28px,3.8vw,52px)',fontWeight:700,letterSpacing:'-0.035em',color:'rgba(255,255,255,0.82)'}}>Your competitors move in real time.</span>
-            <span style={{display:'block',fontFamily:"'Dothed',monospace",fontSize:'clamp(26px,3.4vw,50px)',letterSpacing:'0.04em',color:'rgba(255,255,255,0.78)'}}>Now you see every move.</span>
+          <h2 style={{margin:0,fontWeight:'normal',lineHeight:1.15}}>
+            <span style={{display:'block',marginBottom:4,fontFamily:"'Grift',sans-serif",fontSize:'clamp(28px,3.8vw,52px)',fontWeight:700,letterSpacing:'-0.035em',color:'rgba(255,255,255,0.82)'}}>Your competitors move in real time.</span>
+            <span style={{display:'block',fontFamily:"'Dothed',monospace",fontSize:'clamp(26px,3.4vw,50px)',letterSpacing:'0.04em',color:'rgba(255,255,255,0.78)',whiteSpace:'nowrap'}} className="s1-dothed">Now you see every move.</span>
           </h2>
           <div style={{maxWidth:520}}>
             {["Most businesses find out what competitors did last week. Andromena shows you what they're doing right now.",
@@ -461,7 +463,7 @@ export default function Home() {
 
       {/* Section 2 */}
       <div style={{position:'absolute',inset:0,zIndex:4,pointerEvents:'none',display:'flex',flexDirection:'column',justifyContent:'center',overflow:'hidden',opacity:'var(--s2-op)' as any}}>
-        <p style={{fontSize:'clamp(22px,2.8vw,42px)',fontWeight:500,lineHeight:1.55,letterSpacing:'-0.02em',padding:'0 64px',margin:'0 0 48px 0',width:'100%',boxSizing:'border-box' as any,wordBreak:'break-word' as any,overflowWrap:'break-word' as any}} className="letter-reveal-p">
+        <p style={{fontSize:'clamp(22px,2.8vw,42px)',fontWeight:500,lineHeight:1.55,letterSpacing:'-0.02em',padding:'80px 64px 0',margin:'0 0 48px 0',width:'100%',boxSizing:'border-box' as any,wordBreak:'break-word' as any,overflowWrap:'break-word' as any}} className="letter-reveal-p">
           <LetterReveal text={HERO_TEXT} heroRef={heroRef}/>
         </p>
         <div style={{flexShrink:0,width:'100%'}}>
@@ -498,14 +500,17 @@ export default function Home() {
         @media(max-width:768px){
           .site-nav{padding:18px 20px 0!important;grid-template-columns:auto 1fr!important}
           .nav-links{display:none!important}
-          .nav-cta{font-size:9px!important;padding:8px 14px!important}
-          .hero-section{grid-template-columns:1fr!important;padding:90px 24px 0!important;align-items:flex-start!important}
-          .hero-h1{white-space:normal!important;font-size:clamp(28px,8vw,40px)!important}
-          .hero-sub{font-size:clamp(20px,6vw,32px)!important}
+          .nav-cta{display:none!important}
+          .hero-section{grid-template-columns:1fr!important;padding:30vh 28px 0!important;align-items:flex-start!important}
+          .hero-h1{white-space:normal!important;font-size:clamp(26px,7vw,38px)!important;display:block!important}
+          .hero-sub{white-space:normal!important;font-size:clamp(32px,9vw,48px)!important;display:block!important;margin-bottom:24px!important}
+          .hero-title-wrap{display:block!important}
+          .s1-dothed{font-size:clamp(32px,9vw,48px)!important;letter-spacing:0.04em!important;white-space:normal!important}
+          .s1-section h2 span:first-child{font-size:clamp(18px,4.5vw,28px)!important;white-space:nowrap!important}
           .hero-btns{flex-direction:column!important;align-items:flex-start!important}
           .hero-bottom{left:24px!important;right:24px!important}
           .s1-section{padding:80px 24px 40px!important}
-          .letter-reveal-p{padding:0 24px!important;font-size:clamp(16px,4.5vw,26px)!important;margin-bottom:32px!important}
+          .letter-reveal-p{padding:100px 24px 0!important;font-size:clamp(16px,4.5vw,26px)!important;margin-bottom:32px!important}
           .cards-grid{grid-template-columns:repeat(2,1fr)!important}
           #mod-display{left:10%!important;right:auto!important;width:80%!important}
           .pricing-grid{grid-template-columns:1fr!important;padding:0!important}
@@ -513,7 +518,9 @@ export default function Home() {
           .pricing-right{padding:40px 24px 80px!important}
           .plan-bullets{grid-template-columns:1fr!important}
           .footer-grid{grid-template-columns:1fr!important;gap:40px!important;margin-bottom:60px!important}
-          .footer-bottom{flex-direction:column!important;gap:12px!important;align-items:center!important}
+          .footer-cols{display:grid!important;grid-template-columns:1fr 1fr!important;gap:24px!important;grid-column:1/-1}
+          .footer-bottom{flex-direction:column!important;gap:12px!important;align-items:flex-start!important}
+          #pricing-panel footer{padding:48px 24px 0!important}
         }
       `}</style>
     </div>
@@ -702,29 +709,31 @@ function PricingPanel({pricingRef}:{pricingRef:React.MutableRefObject<number>}) 
       <footer style={{background:'#080808',borderTop:'1px solid rgba(255,255,255,0.08)',padding:'72px 64px 0',overflow:'visible'}}>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:48,marginBottom:80}} className="footer-grid">
           <div>
-            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+            <div className="footer-brand" style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
               <Icon size={38} />
               <div style={{fontFamily:"'Grift',sans-serif",fontSize:19,fontWeight:700,letterSpacing:'0.14em',color:'rgba(255,255,255,0.80)'}}>ANDROMENA</div>
             </div>
             <p style={{fontFamily:'var(--font-body)',fontSize:13,color:'rgba(255,255,255,0.62)',lineHeight:1.85,maxWidth:260}}>Live AI competitor intelligence for the GCC. Know what they're doing before they announce it.</p>
           </div>
-          <div>
-            <div style={{fontFamily:"'Dothed',monospace",fontSize:10,color:'rgba(255,255,255,0.60)',letterSpacing:'0.16em',marginBottom:16}}>PRODUCT</div>
-            {['Features','How It Works','Pricing','API Access'].map(l=>(
-              <div key={l} style={{fontFamily:'var(--font-body)',fontSize:13,color:'rgba(255,255,255,0.68)',marginBottom:10,cursor:'pointer',transition:'color 0.2s'}}
-                onMouseEnter={e=>(e.target as HTMLElement).style.color='rgba(255,255,255,0.85)'}
-                onMouseLeave={e=>(e.target as HTMLElement).style.color='rgba(255,255,255,0.68)'}
-              >{l}</div>
-            ))}
-          </div>
-          <div>
-            <div style={{fontFamily:"'Dothed',monospace",fontSize:10,color:'rgba(255,255,255,0.60)',letterSpacing:'0.16em',marginBottom:16}}>INTELLIGENCE</div>
-            {['Ad Intelligence','Price Watch','Talent Signals','AI Analyst'].map(l=>(
-              <div key={l} style={{fontFamily:'var(--font-body)',fontSize:13,color:'rgba(255,255,255,0.68)',marginBottom:10,cursor:'pointer',transition:'color 0.2s'}}
-                onMouseEnter={e=>(e.target as HTMLElement).style.color='rgba(255,255,255,0.85)'}
-                onMouseLeave={e=>(e.target as HTMLElement).style.color='rgba(255,255,255,0.68)'}
-              >{l}</div>
-            ))}
+          <div className="footer-cols" style={{display:'contents'}}>
+            <div>
+              <div style={{fontFamily:"'Dothed',monospace",fontSize:10,color:'rgba(255,255,255,0.60)',letterSpacing:'0.16em',marginBottom:16}}>PRODUCT</div>
+              {['Features','How It Works','Pricing','API Access'].map(l=>(
+                <div key={l} style={{fontFamily:'var(--font-body)',fontSize:13,color:'rgba(255,255,255,0.68)',marginBottom:10,cursor:'pointer',transition:'color 0.2s'}}
+                  onMouseEnter={e=>(e.target as HTMLElement).style.color='rgba(255,255,255,0.85)'}
+                  onMouseLeave={e=>(e.target as HTMLElement).style.color='rgba(255,255,255,0.68)'}
+                >{l}</div>
+              ))}
+            </div>
+            <div>
+              <div style={{fontFamily:"'Dothed',monospace",fontSize:10,color:'rgba(255,255,255,0.60)',letterSpacing:'0.16em',marginBottom:16}}>INTELLIGENCE</div>
+              {['Ad Intelligence','Price Watch','Talent Signals','AI Analyst'].map(l=>(
+                <div key={l} style={{fontFamily:'var(--font-body)',fontSize:13,color:'rgba(255,255,255,0.68)',marginBottom:10,cursor:'pointer',transition:'color 0.2s'}}
+                  onMouseEnter={e=>(e.target as HTMLElement).style.color='rgba(255,255,255,0.85)'}
+                  onMouseLeave={e=>(e.target as HTMLElement).style.color='rgba(255,255,255,0.68)'}
+                >{l}</div>
+              ))}
+            </div>
           </div>
         </div>
         <WatermarkText/>
@@ -760,7 +769,7 @@ function WatermarkText() {
     return()=>window.removeEventListener('resize',fit)
   },[])
   return (
-    <div ref={ref} style={{width:'100vw',marginLeft:'-64px',overflow:'hidden'}}>
+    <div ref={ref} className="watermark-wrap" style={{width:'100vw',marginLeft:'-64px',overflow:'hidden'}}>
       <div ref={innerRef} style={{fontFamily:"'Dothed',monospace",fontSize:'130px',fontWeight:400,color:'rgba(255,255,255,0.08)',letterSpacing:'0.02em',lineHeight:1,userSelect:'none',whiteSpace:'nowrap',display:'inline-block'}}>
         ANDROMENA
       </div>
