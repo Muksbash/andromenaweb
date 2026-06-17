@@ -1,1 +1,4 @@
 node_modules/
+.next/
+assets/
+node_modules/
