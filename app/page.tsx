@@ -532,7 +532,7 @@ export default function Home() {
           .footer-cols{display:grid!important;grid-template-columns:1fr 1fr!important;gap:24px!important;grid-column:1/-1}
           .footer-bottom{flex-direction:column!important;gap:12px!important;align-items:flex-start!important}
           #pricing-panel footer{padding:48px 24px 0!important}
-          .watermark-wrap{display:none!important}
+          .watermark-wrap{margin-left:-24px!important;width:100vw!important}
         }
       `}</style>
     </div>
